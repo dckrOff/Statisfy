@@ -1,0 +1,20 @@
+# Changelog
+
+Все значимые изменения в проекте будут документироваться в этом файле.
+
+Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+и проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- Создана базовая архитектура MVVM
+- Настроены все необходимые зависимости (Retrofit, Room, Hilt, Navigation Component, Glide)
+- Создана структура пакетов согласно архитектуре
+- Добавлен класс приложения StatisfyApp с поддержкой Hilt
+- Созданы базовые классы для ViewModel, Repository, модели данных
+- Настроен Navigation Component с nav_graph
+- Создана нижняя навигационная панель
+- Созданы экраны-заглушки (Home, News, Favorites, Profile)
+- Добавлены иконки для навигации
+- Настроены темы и стили согласно ТЗ 
