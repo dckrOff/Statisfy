@@ -86,7 +86,7 @@
                 android:layout_height="24dp"
                 android:contentDescription="Поделиться"
                 android:src="@drawable/ic_share"
-                android:tint="?attr/colorOnSurfaceVariant" />
+                app:tint="?attr/colorOnSurfaceVariant" />
 
             <ImageView
                 android:id="@+id/btnBookmark"
@@ -95,7 +95,7 @@
                 android:layout_marginStart="16dp"
                 android:contentDescription="В закладки"
                 android:src="@drawable/ic_bookmark_border"
-                android:tint="?attr/colorOnSurfaceVariant" />
+                app:tint="?attr/colorOnSurfaceVariant" />
 
             <Space
                 android:layout_width="0dp"

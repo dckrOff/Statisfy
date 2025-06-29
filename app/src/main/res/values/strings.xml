@@ -6,4 +6,50 @@
     <string name="profile">Профиль</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    
+    <!-- Auth strings -->
+    <string name="app_slogan">A daily dose of interesting facts</string>
+    <string name="login">Sign in</string>
+    <string name="register">Sign up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="username">Username</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="no_account">Don`t have an account?</string>
+    <string name="have_account">Have an account?</string>
+    <string name="register_now">Sign up</string>
+    <string name="login_now">Sign in</string>
+    <string name="reset_password">Reset password</string>
+    <string name="password_reset_instruction">Enter your email to receive password reset instructions</string>
+    <string name="send">Send</string>
+    <string name="remember_me">Remember me</string>
+    
+    <!-- Validation strings -->
+    <string name="email_required">Email is required</string>
+    <string name="invalid_email">Please enter a valid email</string>
+    <string name="password_required">Password is required</string>
+    <string name="password_too_short">Password must be at least 8 characters</string>
+    <string name="passwords_not_match">Passwords do not match</string>
+    <string name="username_required">Username is required</string>
+    <string name="username_too_short">Username must be at least 3 characters</string>
+    
+    <!-- Biometric strings -->
+    <string name="biometric_title">Вход по биометрии</string>
+    <string name="biometric_subtitle">Используйте биометрические данные для входа в приложение</string>
+    <string name="biometric_cancel">Отмена</string>
+    <string name="use_biometric">Использовать биометрию</string>
+    <string name="biometric_not_available">Биометрическая аутентификация недоступна</string>
+    <string name="biometric_setup">Настроить биометрию</string>
+    <string name="password_strength_very_weak">Password strength very weak</string>
+    <string name="password_strength_weak">Password Strength Weak</string>
+    <string name="password_strength_medium">Password Strength Medium</string>
+    <string name="password_strength_strong">Password Strength Strong</string>
+    <string name="error_empty_username">Username is empty</string>
+    <string name="error_empty_email">Email is empty</string>
+    <string name="error_invalid_email">Invalid email format</string>
+    <string name="error_empty_password">Password is empty</string>
+    <string name="error_weak_password">Password is too weak</string>
+    <string name="error_empty_confirm_password">Confirm password is empty</string>
+    <string name="error_passwords_not_match">Passwords do not match</string>
 </resources>
