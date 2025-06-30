@@ -7,6 +7,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import uz.dckroff.statisfy.data.local.dao.CategoryDao
+import uz.dckroff.statisfy.data.local.dao.FactDao
 import uz.dckroff.statisfy.data.local.dao.UserDao
 import uz.dckroff.statisfy.data.local.database.AppDatabase
 import javax.inject.Singleton
@@ -38,5 +40,23 @@ object DatabaseModule {
     @Singleton
     fun provideUserDao(appDatabase: AppDatabase): UserDao {
         return appDatabase.userDao()
+    }
+    
+    /**
+     * Предоставляет DAO для работы с фактами
+     */
+    @Provides
+    @Singleton
+    fun provideFactDao(appDatabase: AppDatabase): FactDao {
+        return appDatabase.factDao()
+    }
+    
+    /**
+     * Предоставляет DAO для работы с категориями
+     */
+    @Provides
+    @Singleton
+    fun provideCategoryDao(appDatabase: AppDatabase): CategoryDao {
+        return appDatabase.categoryDao()
     }
 } 

@@ -13,6 +13,8 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import uz.dckroff.statisfy.data.remote.api.AuthApi
+import uz.dckroff.statisfy.data.remote.api.CategoryApi
+import uz.dckroff.statisfy.data.remote.api.FactApi
 import uz.dckroff.statisfy.data.remote.interceptor.AuthInterceptor
 import uz.dckroff.statisfy.utils.Constants
 import uz.dckroff.statisfy.utils.Logger
@@ -94,5 +96,25 @@ object NetworkModule {
     fun provideAuthApi(retrofit: Retrofit): AuthApi {
         Logger.i("NetworkModule: Creating AuthApi instance")
         return retrofit.create(AuthApi::class.java)
+    }
+    
+    /**
+     * Предоставляет FactApi
+     */
+    @Provides
+    @Singleton
+    fun provideFactApi(retrofit: Retrofit): FactApi {
+        Logger.i("NetworkModule: Creating FactApi instance")
+        return retrofit.create(FactApi::class.java)
+    }
+    
+    /**
+     * Предоставляет CategoryApi
+     */
+    @Provides
+    @Singleton
+    fun provideCategoryApi(retrofit: Retrofit): CategoryApi {
+        Logger.i("NetworkModule: Creating CategoryApi instance")
+        return retrofit.create(CategoryApi::class.java)
     }
 } 
