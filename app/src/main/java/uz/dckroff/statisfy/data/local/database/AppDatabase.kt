@@ -4,9 +4,11 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import uz.dckroff.statisfy.data.local.dao.CategoryDao
 import uz.dckroff.statisfy.data.local.dao.FactDao
+import uz.dckroff.statisfy.data.local.dao.FavoriteDao
 import uz.dckroff.statisfy.data.local.dao.UserDao
 import uz.dckroff.statisfy.data.local.entities.CategoryEntity
 import uz.dckroff.statisfy.data.local.entities.FactEntity
+import uz.dckroff.statisfy.data.local.entities.FavoriteEntity
 import uz.dckroff.statisfy.data.local.entities.UserEntity
 
 /**
@@ -16,9 +18,10 @@ import uz.dckroff.statisfy.data.local.entities.UserEntity
     entities = [
         UserEntity::class,
         FactEntity::class,
-        CategoryEntity::class
+        CategoryEntity::class,
+        FavoriteEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -37,4 +40,9 @@ abstract class AppDatabase : RoomDatabase() {
      * Получить DAO для работы с категориями
      */
     abstract fun categoryDao(): CategoryDao
+    
+    /**
+     * Получить DAO для работы с избранным
+     */
+    abstract fun favoriteDao(): FavoriteDao
 } 

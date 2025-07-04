@@ -25,15 +25,17 @@
             app:titleTextColor="@android:color/white" />
 
         <!-- Поисковая панель -->
-        <com.google.android.material.search.SearchBar
+        <EditText
             android:id="@+id/searchBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:hint="Поиск фактов..."
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:shapeAppearanceOverlay="@style/RoundedSearchBar"
-            app:strokeColor="@android:color/transparent" />
+            android:backgroundTint="@android:color/transparent"
+            android:inputType="text"
+            android:drawablePadding="8dp"
+            android:padding="12dp"/>
+
 
     </com.google.android.material.appbar.AppBarLayout>
 

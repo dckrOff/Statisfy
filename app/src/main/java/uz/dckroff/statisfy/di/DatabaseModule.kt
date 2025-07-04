@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import uz.dckroff.statisfy.data.local.dao.CategoryDao
 import uz.dckroff.statisfy.data.local.dao.FactDao
+import uz.dckroff.statisfy.data.local.dao.FavoriteDao
 import uz.dckroff.statisfy.data.local.dao.UserDao
 import uz.dckroff.statisfy.data.local.database.AppDatabase
 import javax.inject.Singleton
@@ -58,5 +59,14 @@ object DatabaseModule {
     @Singleton
     fun provideCategoryDao(appDatabase: AppDatabase): CategoryDao {
         return appDatabase.categoryDao()
+    }
+    
+    /**
+     * Предоставляет DAO для работы с избранным
+     */
+    @Provides
+    @Singleton
+    fun provideFavoriteDao(appDatabase: AppDatabase): FavoriteDao {
+        return appDatabase.favoriteDao()
     }
 } 

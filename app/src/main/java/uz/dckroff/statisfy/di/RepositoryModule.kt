@@ -6,16 +6,20 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import uz.dckroff.statisfy.data.local.dao.CategoryDao
 import uz.dckroff.statisfy.data.local.dao.FactDao
+import uz.dckroff.statisfy.data.local.dao.FavoriteDao
 import uz.dckroff.statisfy.data.local.dao.UserDao
 import uz.dckroff.statisfy.data.remote.api.AuthApi
 import uz.dckroff.statisfy.data.remote.api.CategoryApi
 import uz.dckroff.statisfy.data.remote.api.FactApi
+import uz.dckroff.statisfy.data.remote.api.FavoriteApi
 import uz.dckroff.statisfy.data.repository.AuthRepositoryImpl
 import uz.dckroff.statisfy.data.repository.CategoryRepositoryImpl
 import uz.dckroff.statisfy.data.repository.FactRepositoryImpl
+import uz.dckroff.statisfy.data.repository.FavoritesRepositoryImpl
 import uz.dckroff.statisfy.domain.repository.AuthRepository
 import uz.dckroff.statisfy.domain.repository.CategoryRepository
 import uz.dckroff.statisfy.domain.repository.FactRepository
+import uz.dckroff.statisfy.domain.repository.FavoritesRepository
 import uz.dckroff.statisfy.utils.NetworkChecker
 import uz.dckroff.statisfy.utils.PreferenceManager
 import javax.inject.Singleton
@@ -65,5 +69,18 @@ object RepositoryModule {
         networkChecker: NetworkChecker
     ): CategoryRepository {
         return CategoryRepositoryImpl(categoryApi, categoryDao, networkChecker)
+    }
+    
+    /**
+     * Предоставляет репозиторий избранного
+     */
+    @Provides
+    @Singleton
+    fun provideFavoritesRepository(
+        favoriteDao: FavoriteDao,
+        favoriteApi: FavoriteApi,
+        networkChecker: NetworkChecker
+    ): FavoritesRepository {
+        return FavoritesRepositoryImpl(favoriteDao, favoriteApi, networkChecker)
     }
 } 

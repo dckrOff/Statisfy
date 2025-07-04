@@ -45,4 +45,10 @@
     <color name="yellow">#FFEB3B</color>
     <color name="green">#4CAF50</color>
     <color name="gray">#9E9E9E</color>
+    
+    <!-- Цвета для чипов категорий -->
+    <color name="chip_background_color">#E6F0F3</color>
+    <color name="chip_selected_color">#BBDEFB</color>
+    <color name="chip_text_color">#1B2528</color>
+    <color name="chip_stroke_color">#1976D2</color>
 </resources>

@@ -52,4 +52,8 @@
     <string name="error_weak_password">Password is too weak</string>
     <string name="error_empty_confirm_password">Confirm password is empty</string>
     <string name="error_passwords_not_match">Passwords do not match</string>
+    <string name="share">Share</string>
+    <string name="copy">Copy</string>
+    <string name="add_to_favorites">Add to favorite</string>
+    <string name="random_fact">Random fact</string>
 </resources>

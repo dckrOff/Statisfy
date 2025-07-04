@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -20,6 +21,7 @@ import uz.dckroff.statisfy.domain.model.Fact
 import uz.dckroff.statisfy.domain.model.HomeData
 import uz.dckroff.statisfy.presentation.adapter.FactAdapter
 import uz.dckroff.statisfy.presentation.viewmodel.HomeViewModel
+import uz.dckroff.statisfy.utils.Logger
 import uz.dckroff.statisfy.utils.UiState
 import uz.dckroff.statisfy.utils.gone
 import uz.dckroff.statisfy.utils.visible
@@ -58,29 +60,26 @@ class HomeFragment : Fragment() {
         
         // Настройка кнопки "More Facts"
         binding.btnMoreFacts.setOnClickListener {
-            // TODO: Навигация к списку всех фактов
-            Toast.makeText(requireContext(), "Coming soon in next update", Toast.LENGTH_SHORT).show()
+            navigateToFactsList()
         }
         
         // Настройка кнопки "See All"
         binding.tvSeeAllFacts.setOnClickListener {
-            // TODO: Навигация к списку всех фактов
-            Toast.makeText(requireContext(), "Coming soon in next update", Toast.LENGTH_SHORT).show()
+            navigateToFactsList()
         }
     }
     
     private fun setupRecyclerView() {
         factAdapter = FactAdapter(
             onFactClick = { fact ->
-                // TODO: Открыть детальный просмотр факта
-                Toast.makeText(requireContext(), "Fact: ${fact.title}", Toast.LENGTH_SHORT).show()
+                navigateToFactDetail(fact.id)
             },
             onShareClick = { fact ->
                 shareFact(fact)
             },
             onFavoriteClick = { fact ->
-                // TODO: Добавить в избранное
-                Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT).show()
+                // TODO: Реализовать добавление в избранное с помощью ViewModel
+                Toast.makeText(requireContext(), "Добавлено в избранное", Toast.LENGTH_SHORT).show()
             }
         )
         
@@ -134,34 +133,61 @@ class HomeFragment : Fragment() {
             tvFactTitle.text = fact.title
             tvFactContent.text = fact.content
             tvFactCategory.text = fact.category.name
-            tvFactSource.text = "Source: ${fact.source}"
+            tvFactSource.text = "Источник: ${fact.source}"
             
             // Настройка кнопок действий
             btnShare.setOnClickListener { shareFact(fact) }
             btnFavorite.setOnClickListener { 
-                // TODO: Добавить в избранное
-                Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT).show()
+                // TODO: Реализовать добавление в избранное с помощью ViewModel
+                Toast.makeText(requireContext(), "Добавлено в избранное", Toast.LENGTH_SHORT).show()
             }
             btnCopy.setOnClickListener { copyFactToClipboard(fact) }
+            
+            // Добавляем обработчик клика на карточку для перехода к деталям
+            factCardView.setOnClickListener {
+                navigateToFactDetail(fact.id)
+            }
+        }
+    }
+    
+    private fun navigateToFactDetail(factId: String) {
+        Logger.d("HomeFragment: Navigating to fact detail with id: $factId")
+        try {
+            val directions = HomeFragmentDirections.actionHomeFragmentToFactDetailFragment(factId)
+            findNavController().navigate(directions)
+        } catch (e: Exception) {
+            Logger.e("HomeFragment: Error navigating to fact detail", e)
+            Toast.makeText(requireContext(), "Ошибка при открытии деталей факта", Toast.LENGTH_SHORT).show()
+        }
+    }
+    
+    private fun navigateToFactsList() {
+        Logger.d("HomeFragment: Navigating to facts list")
+        try {
+            val directions = HomeFragmentDirections.actionHomeFragmentToFactsFragment()
+            findNavController().navigate(directions)
+        } catch (e: Exception) {
+            Logger.e("HomeFragment: Error navigating to facts list", e)
+            Toast.makeText(requireContext(), "Ошибка при открытии списка фактов", Toast.LENGTH_SHORT).show()
         }
     }
     
     private fun shareFact(fact: Fact) {
-        val shareText = "${fact.title}\n\n${fact.content}\n\nSource: ${fact.source}"
+        val shareText = "${fact.title}\n\n${fact.content}\n\nИсточник: ${fact.source}"
         val sendIntent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, shareText)
             type = "text/plain"
         }
-        val shareIntent = Intent.createChooser(sendIntent, null)
+        val shareIntent = Intent.createChooser(sendIntent, "Поделиться фактом")
         startActivity(shareIntent)
     }
     
     private fun copyFactToClipboard(fact: Fact) {
         val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("Fact", "${fact.title}\n\n${fact.content}")
+        val clip = ClipData.newPlainText("Факт", "${fact.title}\n\n${fact.content}")
         clipboard.setPrimaryClip(clip)
-        Toast.makeText(requireContext(), "Fact copied to clipboard", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Факт скопирован в буфер обмена", Toast.LENGTH_SHORT).show()
     }
     
     private fun showError(message: String) {

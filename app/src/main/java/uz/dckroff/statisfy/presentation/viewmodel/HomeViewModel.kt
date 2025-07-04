@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import uz.dckroff.statisfy.domain.model.HomeData
 import uz.dckroff.statisfy.domain.repository.FactRepository
 import uz.dckroff.statisfy.utils.Logger
+import uz.dckroff.statisfy.utils.Result
 import uz.dckroff.statisfy.utils.UiState
 import javax.inject.Inject
 
@@ -22,54 +23,61 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val factRepository: FactRepository
 ) : ViewModel() {
-    
+
     // Состояние UI для главного экрана
     private val _homeState = MutableStateFlow<UiState<HomeData>>(UiState.Loading())
     val homeState: StateFlow<UiState<HomeData>> = _homeState.asStateFlow()
-    
+
     // Индикатор обновления
     private val _isRefreshing = MutableLiveData(false)
     val isRefreshing: LiveData<Boolean> = _isRefreshing
-    
+
     init {
         loadHomeData()
     }
-    
+
     /**
      * Загрузка данных для главного экрана
      */
     fun loadHomeData() {
         Logger.methodCall("HomeViewModel", "loadHomeData")
-        
+
         viewModelScope.launch {
             _homeState.value = UiState.Loading()
-            
+
             try {
                 // Получаем факт дня
                 val dailyFactResult = factRepository.getDailyFact()
-                
+
                 // Получаем недавние факты
                 val recentFactsResult = factRepository.getRecentFacts()
-                
-                if (dailyFactResult is uz.dckroff.statisfy.utils.Result.Success && 
-                    recentFactsResult is uz.dckroff.statisfy.utils.Result.Success) {
-                    
+
+                if (dailyFactResult is Result.Success ||
+                    recentFactsResult is Result.Success
+                ) {
+                    val daily =
+                        if (dailyFactResult is Result.Success) dailyFactResult.data else null
+                    val recent =
+                        if (recentFactsResult is Result.Success) recentFactsResult.data else null
+
                     val homeData = HomeData(
-                        dailyFact = dailyFactResult.data,
-                        recentFacts = recentFactsResult.data
+                        dailyFact = daily,
+                        recentFacts = recent
                     )
-                    
+
                     _homeState.value = UiState.Success(homeData)
                     Logger.d("HomeViewModel: Successfully loaded home data")
                 } else {
                     val errorMessage = when {
-                        dailyFactResult is uz.dckroff.statisfy.utils.Result.Error -> 
+                        dailyFactResult is Result.Error ->
                             dailyFactResult.message
-                        recentFactsResult is uz.dckroff.statisfy.utils.Result.Error -> 
+
+                        recentFactsResult is Result.Error ->
                             recentFactsResult.message
+
                         else -> "Неизвестная ошибка при загрузке данных"
                     }
-                    
+
                     _homeState.value = UiState.Error(errorMessage)
                     Logger.e("HomeViewModel: Error loading home data: $errorMessage")
                 }
@@ -81,13 +89,13 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    
+
     /**
      * Обновление данных (pull-to-refresh)
      */
     fun refreshData() {
         Logger.methodCall("HomeViewModel", "refreshData")
-        
+
         _isRefreshing.value = true
         loadHomeData()
     }

@@ -71,7 +71,22 @@
         android:id="@+id/homeFragment"
         android:name="uz.dckroff.statisfy.presentation.ui.home.HomeFragment"
         android:label="HomeFragment"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_factDetailFragment"
+            app:destination="@id/factDetailFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_homeFragment_to_factsFragment"
+            app:destination="@id/factsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
 
     <fragment
         android:id="@+id/newsFragment"
@@ -90,5 +105,31 @@
         android:name="uz.dckroff.statisfy.presentation.ui.profile.ProfileFragment"
         android:label="ProfileFragment"
         tools:layout="@layout/fragment_profile" />
+        
+    <!-- Детальные экраны -->
+    <fragment
+        android:id="@+id/factDetailFragment"
+        android:name="uz.dckroff.statisfy.presentation.ui.facts.FactDetailFragment"
+        android:label="FactDetailFragment"
+        tools:layout="@layout/fragment_fact_detail">
+        <argument
+            android:name="factId"
+            app:argType="string" />
+    </fragment>
+    
+    <!-- Экран списка фактов -->
+    <fragment
+        android:id="@+id/factsFragment"
+        android:name="uz.dckroff.statisfy.presentation.ui.facts.FactsFragment"
+        android:label="FactsFragment"
+        tools:layout="@layout/fragment_facts">
+        <action
+            android:id="@+id/action_factsFragment_to_factDetailFragment"
+            app:destination="@id/factDetailFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
 
 </navigation> 

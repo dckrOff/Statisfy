@@ -15,6 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import uz.dckroff.statisfy.data.remote.api.AuthApi
 import uz.dckroff.statisfy.data.remote.api.CategoryApi
 import uz.dckroff.statisfy.data.remote.api.FactApi
+import uz.dckroff.statisfy.data.remote.api.FavoriteApi
 import uz.dckroff.statisfy.data.remote.interceptor.AuthInterceptor
 import uz.dckroff.statisfy.utils.Constants
 import uz.dckroff.statisfy.utils.Logger
@@ -116,5 +117,14 @@ object NetworkModule {
     fun provideCategoryApi(retrofit: Retrofit): CategoryApi {
         Logger.i("NetworkModule: Creating CategoryApi instance")
         return retrofit.create(CategoryApi::class.java)
+    }
+    
+    /**
+     * Предоставляет API для избранного
+     */
+    @Provides
+    @Singleton
+    fun provideFavoriteApi(retrofit: Retrofit): FavoriteApi {
+        return retrofit.create(FavoriteApi::class.java)
     }
 } 

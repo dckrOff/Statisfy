@@ -5,7 +5,7 @@ package uz.dckroff.statisfy.domain.model
  */
 data class HomeData(
     val dailyFact: Fact? = null,
-    val recentFacts: List<Fact> = emptyList()
+    val recentFacts: List<Fact>? = emptyList()
 )
 
 /**
