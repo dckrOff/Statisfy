@@ -16,6 +16,7 @@ import uz.dckroff.statisfy.data.remote.api.AuthApi
 import uz.dckroff.statisfy.data.remote.api.CategoryApi
 import uz.dckroff.statisfy.data.remote.api.FactApi
 import uz.dckroff.statisfy.data.remote.api.FavoriteApi
+import uz.dckroff.statisfy.data.remote.api.NewsApi
 import uz.dckroff.statisfy.data.remote.interceptor.AuthInterceptor
 import uz.dckroff.statisfy.utils.Constants
 import uz.dckroff.statisfy.utils.Logger
@@ -126,5 +127,15 @@ object NetworkModule {
     @Singleton
     fun provideFavoriteApi(retrofit: Retrofit): FavoriteApi {
         return retrofit.create(FavoriteApi::class.java)
+    }
+    
+    /**
+     * Предоставляет NewsApi
+     */
+    @Provides
+    @Singleton
+    fun provideNewsApi(retrofit: Retrofit): NewsApi {
+        Logger.i("NetworkModule: Creating NewsApi instance")
+        return retrofit.create(NewsApi::class.java)
     }
 } 

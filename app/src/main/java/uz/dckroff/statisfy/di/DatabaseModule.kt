@@ -10,6 +10,7 @@ import dagger.hilt.components.SingletonComponent
 import uz.dckroff.statisfy.data.local.dao.CategoryDao
 import uz.dckroff.statisfy.data.local.dao.FactDao
 import uz.dckroff.statisfy.data.local.dao.FavoriteDao
+import uz.dckroff.statisfy.data.local.dao.NewsDao
 import uz.dckroff.statisfy.data.local.dao.UserDao
 import uz.dckroff.statisfy.data.local.database.AppDatabase
 import javax.inject.Singleton
@@ -68,5 +69,14 @@ object DatabaseModule {
     @Singleton
     fun provideFavoriteDao(appDatabase: AppDatabase): FavoriteDao {
         return appDatabase.favoriteDao()
+    }
+    
+    /**
+     * Предоставляет DAO для работы с новостями
+     */
+    @Provides
+    @Singleton
+    fun provideNewsDao(appDatabase: AppDatabase): NewsDao {
+        return appDatabase.newsDao()
     }
 } 
