@@ -3,7 +3,7 @@ package uz.dckroff.statisfy.domain.repository
 import kotlinx.coroutines.flow.Flow
 import uz.dckroff.statisfy.domain.model.News
 import uz.dckroff.statisfy.domain.model.NewsData
-import uz.dckroff.statisfy.utils.Resource
+import uz.dckroff.statisfy.domain.model.Resource
 
 /**
  * Репозиторий для работы с новостями

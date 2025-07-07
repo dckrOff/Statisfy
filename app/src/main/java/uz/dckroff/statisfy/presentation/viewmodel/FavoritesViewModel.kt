@@ -21,7 +21,7 @@ class FavoritesViewModel @Inject constructor(
 ) : ViewModel() {
 
     // UI State
-    private val _uiState = MutableStateFlow<UiState<FavoritesData>>(UiState.Loading())
+    private val _uiState = MutableStateFlow<UiState<FavoritesData>>(UiState.Loading)
     val uiState: StateFlow<UiState<FavoritesData>> = _uiState.asStateFlow()
     
     // Search and Filter State
@@ -68,7 +68,7 @@ class FavoritesViewModel @Inject constructor(
      */
     private fun loadFavoritesData() {
         viewModelScope.launch {
-            _uiState.value = UiState.Loading()
+            _uiState.value = UiState.Loading
             
             try {
                 favoritesRepository.getFavoritesData()

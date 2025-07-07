@@ -30,15 +30,15 @@ class FactsViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Состояние для загрузки конкретного факта
-    private val _factState = MutableStateFlow<UiState<Fact>>(UiState.Loading())
+    private val _factState = MutableStateFlow<UiState<Fact>>(UiState.Loading)
     val factState: StateFlow<UiState<Fact>> = _factState
     
     // Состояние для списка фактов
-    private val _factsState = MutableStateFlow<UiState<List<Fact>>>(UiState.Loading())
+    private val _factsState = MutableStateFlow<UiState<List<Fact>>>(UiState.Loading)
     val factsState: StateFlow<UiState<List<Fact>>> = _factsState
     
     // Состояние для списка категорий
-    private val _categoriesState = MutableStateFlow<UiState<List<Category>>>(UiState.Loading())
+    private val _categoriesState = MutableStateFlow<UiState<List<Category>>>(UiState.Loading)
     val categoriesState: StateFlow<UiState<List<Category>>> = _categoriesState
     
     // Текущий факт для работы с ним
@@ -60,7 +60,7 @@ class FactsViewModel @Inject constructor(
         Logger.d("FactsViewModel: getFactById() called with factId: $factId")
         
         viewModelScope.launch {
-            _factState.value = UiState.Loading()
+            _factState.value = UiState.Loading
             
             try {
                 val result = factRepository.getFactById(factId)
@@ -88,7 +88,7 @@ class FactsViewModel @Inject constructor(
         
         viewModelScope.launch {
             if (page == 0) {
-                _factsState.value = UiState.Loading()
+                _factsState.value = UiState.Loading
             }
             
             try {
@@ -124,7 +124,7 @@ class FactsViewModel @Inject constructor(
         Logger.d("FactsViewModel: getCategories() called")
         
         viewModelScope.launch {
-            _categoriesState.value = UiState.Loading()
+            _categoriesState.value = UiState.Loading
             
             try {
                 val result = categoryRepository.getCategories()

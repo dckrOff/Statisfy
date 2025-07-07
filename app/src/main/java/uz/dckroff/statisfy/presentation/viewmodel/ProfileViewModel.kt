@@ -23,15 +23,15 @@ class ProfileViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Profile State
-    private val _profileState = MutableStateFlow<UiState<User>>(UiState.Loading())
+    private val _profileState = MutableStateFlow<UiState<User>>(UiState.Loading)
     val profileState: StateFlow<UiState<User>> = _profileState.asStateFlow()
     
     // Preferences State
-    private val _preferencesState = MutableStateFlow<UiState<UserPreferences>>(UiState.Loading())
+    private val _preferencesState = MutableStateFlow<UiState<UserPreferences>>(UiState.Loading)
     val preferencesState: StateFlow<UiState<UserPreferences>> = _preferencesState.asStateFlow()
     
     // Statistics State
-    private val _statsState = MutableStateFlow<UiState<UserStats>>(UiState.Loading())
+    private val _statsState = MutableStateFlow<UiState<UserStats>>(UiState.Loading)
     val statsState: StateFlow<UiState<UserStats>> = _statsState.asStateFlow()
     
     // UI States
@@ -89,7 +89,7 @@ class ProfileViewModel @Inject constructor(
      */
     private fun loadProfile() {
         viewModelScope.launch {
-            _profileState.value = UiState.Loading()
+            _profileState.value = UiState.Loading
             try {
                 val user = authRepository.getCurrentUser()
                 if (user != null) {
@@ -110,7 +110,7 @@ class ProfileViewModel @Inject constructor(
      */
     private fun loadPreferences() {
         viewModelScope.launch {
-            _preferencesState.value = UiState.Loading()
+            _preferencesState.value = UiState.Loading
             try {
                 userPreferencesRepository.getUserPreferences(currentUserId).fold(
                     onSuccess = { preferences ->
@@ -133,7 +133,7 @@ class ProfileViewModel @Inject constructor(
      */
     private fun loadStatistics() {
         viewModelScope.launch {
-            _statsState.value = UiState.Loading()
+            _statsState.value = UiState.Loading
             try {
                 userStatsRepository.getUserStats(currentUserId).fold(
                     onSuccess = { stats ->

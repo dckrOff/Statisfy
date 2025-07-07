@@ -39,6 +39,15 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    
+    kapt {
+        correctErrorTypes = true
+        javacOptions {
+            option("-J--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED")
+            option("-J--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED")
+            option("-J--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED")
+        }
+    }
 }
 
 dependencies {

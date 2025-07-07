@@ -10,7 +10,7 @@ import uz.dckroff.statisfy.utils.UiState
  */
 abstract class BaseViewModel<T> : ViewModel() {
 
-    protected val _uiState = MutableStateFlow<UiState<T>>(UiState.Loading())
+    protected val _uiState = MutableStateFlow<UiState<T>>(UiState.Loading)
     val uiState: StateFlow<UiState<T>> = _uiState
 
 } 

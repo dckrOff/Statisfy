@@ -29,14 +29,14 @@ interface FavoriteDao {
     /**
      * Получить элемент избранного по ID
      */
-    @Query("SELECT * FROM favorites WHERE itemId = :itemId")
-    suspend fun getFavoriteById(itemId: String): FavoriteEntity?
+    @Query("SELECT * FROM favorites WHERE contentId = :contentId")
+    suspend fun getFavoriteById(contentId: String): FavoriteEntity?
 
     /**
      * Проверить наличие элемента в избранном
      */
-    @Query("SELECT EXISTS(SELECT 1 FROM favorites WHERE itemId = :itemId)")
-    suspend fun isFavorite(itemId: String): Boolean
+    @Query("SELECT EXISTS(SELECT 1 FROM favorites WHERE contentId = :contentId)")
+    suspend fun isFavorite(contentId: String): Boolean
 
     /**
      * Получить все избранные элементы
@@ -47,6 +47,6 @@ interface FavoriteDao {
     /**
      * Получить избранные элементы по типу
      */
-    @Query("SELECT * FROM favorites WHERE itemType = :itemType")
-    fun getFavoritesByType(itemType: String): Flow<List<FavoriteEntity>>
+    @Query("SELECT * FROM favorites WHERE contentType = :contentType")
+    fun getFavoritesByType(contentType: String): Flow<List<FavoriteEntity>>
 } 

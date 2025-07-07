@@ -64,33 +64,3 @@ data class NewsListResponse(
     val pagination: PaginationDto
 )
 
-/**
- * DTO для пагинации
- */
-data class PaginationDto(
-    @SerializedName("current_page")
-    val currentPage: Int,
-    @SerializedName("total_pages")
-    val totalPages: Int,
-    @SerializedName("per_page")
-    val perPage: Int,
-    @SerializedName("total_items")
-    val totalItems: Int
-)
-
-/**
- * DTO для категории (если еще не существует)
- */
-data class CategoryDto(
-    @SerializedName("id")
-    val id: String,
-    @SerializedName("name")
-    val name: String
-) {
-    fun toDomainModel(): Category {
-        return Category(
-            id = id,
-            name = name
-        )
-    }
-}
