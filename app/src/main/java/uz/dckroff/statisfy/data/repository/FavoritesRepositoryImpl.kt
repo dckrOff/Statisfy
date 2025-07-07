@@ -57,7 +57,7 @@ class FavoritesRepositoryImpl @Inject constructor(
                 contentId = statistic.id,
                 contentType = FavoriteEntity.TYPE_STATISTIC,
                 title = statistic.title,
-                summary = statistic.description,
+                summary = "${statistic.value} ${statistic.unit}",
                 imageUrl = null,
                 source = statistic.source,
                 categoryId = null,
@@ -127,11 +127,17 @@ class FavoritesRepositoryImpl @Inject constructor(
                 .map { it.toDomainModel() }
 
             FavoritesData(
-                facts = facts,
-                news = news,
-                statistics = statistics,
+                totalCount = favorites.size,
+                factsCount = facts.size,
+                newsCount = news.size,
+                statisticsCount = statistics.size,
                 folders = emptyList(), // Будет реализовано при добавлении методов папок
-                totalCount = favorites.size
+                recentItems = favorites.take(10).map { it.toDomainModel() },
+                groupedContent = mapOf(
+                    ContentType.FACT to facts,
+                    ContentType.NEWS to news,
+                    ContentType.STATISTIC to statistics
+                )
             )
         }
     }
@@ -192,11 +198,11 @@ class FavoritesRepositoryImpl @Inject constructor(
                     Statistic(
                         id = entity.contentId,
                         title = entity.title,
-                        value = "",
-                        description = entity.summary ?: "",
-                        source = entity.source ?: "",
+                        value = 0.0,
                         unit = "",
-                        createdAt = entity.addedAt
+                        category = Category("", ""),
+                        source = entity.source ?: "",
+                        date = LocalDate.now()
                     )
                 } else null
             }
@@ -260,8 +266,9 @@ class FavoritesRepositoryImpl @Inject constructor(
     }
 
     override fun getFavoritesInFolder(folderId: String): Flow<List<FavoriteItem>> {
-        return favoriteDao.getFavoritesInFolder(folderId).map { entities ->
-            entities.map { it.toDomainModel() }
+        return kotlinx.coroutines.flow.flow {
+            val entities = favoriteDao.getFavoritesInFolder(folderId)
+            emit(entities.map { it.toDomainModel() })
         }
     }
 

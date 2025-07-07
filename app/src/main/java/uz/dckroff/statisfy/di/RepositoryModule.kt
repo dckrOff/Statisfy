@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import uz.dckroff.statisfy.data.local.dao.CategoryDao
 import uz.dckroff.statisfy.data.local.dao.FactDao
 import uz.dckroff.statisfy.data.local.dao.FavoriteDao
+import uz.dckroff.statisfy.data.local.dao.FavoriteFolderDao
 import uz.dckroff.statisfy.data.local.dao.NewsDao
 import uz.dckroff.statisfy.data.local.dao.UserDao
 import uz.dckroff.statisfy.data.remote.api.AuthApi
@@ -82,10 +83,9 @@ object RepositoryModule {
     @Singleton
     fun provideFavoritesRepository(
         favoriteDao: FavoriteDao,
-        favoriteApi: FavoriteApi,
-        networkChecker: NetworkChecker
+        favoriteFolderDao: FavoriteFolderDao
     ): FavoritesRepository {
-        return FavoritesRepositoryImpl(favoriteDao, favoriteApi, networkChecker)
+        return FavoritesRepositoryImpl(favoriteDao, favoriteFolderDao)
     }
     
     /**

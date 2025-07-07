@@ -29,20 +29,7 @@ data class ContentPreferences(
     val enablePersonalizedRecommendations: Boolean = true
 )
 
-/**
- * Настройки уведомлений
- */
-data class NotificationSettings(
-    val enablePushNotifications: Boolean = true,
-    val dailyFactTime: String = "09:00", // HH:mm формат
-    val enableNewsNotifications: Boolean = true,
-    val newsNotificationFrequency: NotificationFrequency = NotificationFrequency.DAILY,
-    val enableRecommendations: Boolean = true,
-    val enableActivityReminders: Boolean = true,
-    val quietHoursStart: String = "22:00",
-    val quietHoursEnd: String = "08:00",
-    val notificationCategories: List<String> = emptyList()
-)
+
 
 /**
  * Настройки отображения
