@@ -23,12 +23,7 @@ fun View.hide() {
     visibility = View.GONE
 }
 
-/**
- * Скрыть View (сделать невидимым, но оставить место)
- */
-fun View.invisible() {
-    visibility = View.INVISIBLE
-}
+
 
 /**
  * Показать или скрыть View в зависимости от условия

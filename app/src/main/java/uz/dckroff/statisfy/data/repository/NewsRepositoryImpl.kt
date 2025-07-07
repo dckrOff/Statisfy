@@ -10,7 +10,7 @@ import uz.dckroff.statisfy.data.remote.api.NewsApi
 import uz.dckroff.statisfy.domain.model.News
 import uz.dckroff.statisfy.domain.model.NewsData
 import uz.dckroff.statisfy.domain.repository.NewsRepository
-import uz.dckroff.statisfy.utils.Resource
+import uz.dckroff.statisfy.domain.model.Resource
 import javax.inject.Inject
 import javax.inject.Singleton
 

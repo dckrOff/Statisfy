@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import uz.dckroff.statisfy.domain.model.News
 import uz.dckroff.statisfy.domain.model.NewsData
 import uz.dckroff.statisfy.domain.repository.NewsRepository
-import uz.dckroff.statisfy.utils.Resource
+import uz.dckroff.statisfy.domain.model.Resource
 import uz.dckroff.statisfy.utils.UiState
 import javax.inject.Inject
 

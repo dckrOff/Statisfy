@@ -29,23 +29,7 @@ data class FactDto(
     }
 }
 
-/**
- * DTO для категории
- */
-data class CategoryDto(
-    val id: String,
-    val name: String
-) {
-    /**
-     * Преобразование DTO в доменную модель
-     */
-    fun toDomainModel(): Category {
-        return Category(
-            id = id,
-            name = name
-        )
-    }
-}
+
 
 /**
  * DTO для списка фактов с пагинацией

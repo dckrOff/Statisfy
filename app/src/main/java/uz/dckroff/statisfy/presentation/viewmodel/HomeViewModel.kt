@@ -25,7 +25,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Состояние UI для главного экрана
-    private val _homeState = MutableStateFlow<UiState<HomeData>>(UiState.Loading())
+    private val _homeState = MutableStateFlow<UiState<HomeData>>(UiState.Loading)
     val homeState: StateFlow<UiState<HomeData>> = _homeState.asStateFlow()
 
     // Индикатор обновления
@@ -43,7 +43,7 @@ class HomeViewModel @Inject constructor(
         Logger.methodCall("HomeViewModel", "loadHomeData")
 
         viewModelScope.launch {
-            _homeState.value = UiState.Loading()
+            _homeState.value = UiState.Loading
 
             try {
                 // Получаем факт дня

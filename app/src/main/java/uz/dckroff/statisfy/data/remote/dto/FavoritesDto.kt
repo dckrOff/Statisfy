@@ -204,19 +204,7 @@ data class AccountDeletionRequestDto(
 
 // ОБЩИЕ DTO
 
-/**
- * DTO пагинации
- */
-data class PaginationDto(
-    @SerializedName("page") val page: Int,
-    @SerializedName("size") val size: Int,
-    @SerializedName("totalElements") val totalElements: Long,
-    @SerializedName("totalPages") val totalPages: Int,
-    @SerializedName("first") val first: Boolean,
-    @SerializedName("last") val last: Boolean,
-    @SerializedName("hasNext") val hasNext: Boolean,
-    @SerializedName("hasPrevious") val hasPrevious: Boolean
-)
+
 
 /**
  * DTO ответа API
