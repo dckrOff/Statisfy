@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import uz.dckroff.statisfy.domain.model.Category
+import uz.dckroff.statisfy.domain.model.ContentType
 import uz.dckroff.statisfy.domain.model.Fact
 import uz.dckroff.statisfy.domain.repository.CategoryRepository
 import uz.dckroff.statisfy.domain.repository.FactRepository
@@ -151,7 +152,7 @@ class FactsViewModel @Inject constructor(
         
         viewModelScope.launch {
             try {
-                val isFavorite = favoritesRepository.isFavorite(factId)
+                val isFavorite = favoritesRepository.isFavorite(factId, ContentType.FACT)
                 _isFavorite.value = isFavorite
                 Logger.d("FactsViewModel: Fact favorite status: $isFavorite")
             } catch (e: Exception) {

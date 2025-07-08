@@ -4,6 +4,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -81,6 +82,14 @@ dependencies {
 
     // Image Loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
+
+    // Work Manager for notifications
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
     // Biometric
     implementation("androidx.biometric:biometric:1.2.0-alpha05")

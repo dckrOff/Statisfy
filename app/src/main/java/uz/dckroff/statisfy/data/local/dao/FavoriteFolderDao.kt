@@ -17,6 +17,12 @@ interface FavoriteFolderDao {
     fun getAllFolders(): Flow<List<FavoriteFolderEntity>>
     
     /**
+     * Получить все папки синхронно
+     */
+    @Query("SELECT * FROM favorite_folders ORDER BY sortOrder ASC, name ASC")
+    suspend fun getAllFoldersSync(): List<FavoriteFolderEntity>
+    
+    /**
      * Получить папку по ID
      */
     @Query("SELECT * FROM favorite_folders WHERE id = :folderId")

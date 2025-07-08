@@ -49,4 +49,64 @@ interface FavoriteDao {
      */
     @Query("SELECT * FROM favorites WHERE contentType = :contentType")
     fun getFavoritesByType(contentType: String): Flow<List<FavoriteEntity>>
+
+    /**
+     * Удалить элемент избранного по ID
+     */
+    @Query("DELETE FROM favorites WHERE id = :id")
+    suspend fun deleteFavoriteById(id: String)
+
+    /**
+     * Удалить элемент избранного по content ID
+     */
+    @Query("DELETE FROM favorites WHERE contentId = :contentId")
+    suspend fun deleteFavoriteByContentId(contentId: String)
+
+    /**
+     * Получить общее количество избранных элементов
+     */
+    @Query("SELECT COUNT(*) FROM favorites")
+    suspend fun getTotalCount(): Int
+
+    /**
+     * Получить недавние избранные элементы
+     */
+    @Query("SELECT * FROM favorites ORDER BY addedAt DESC LIMIT :limit")
+    suspend fun getRecentFavorites(limit: Int): List<FavoriteEntity>
+
+    /**
+     * Поиск в избранном
+     */
+    @Query("SELECT * FROM favorites WHERE title LIKE '%' || :query || '%' OR contentType LIKE '%' || :query || '%'")
+    suspend fun searchFavorites(query: String): List<FavoriteEntity>
+
+    /**
+     * Обновить папку для элемента избранного
+     */
+    @Query("UPDATE favorites SET folderId = :folderId WHERE id = :favoriteId")
+    suspend fun updateFolderId(favoriteId: String, folderId: String?)
+
+    /**
+     * Получить избранные элементы в папке
+     */
+    @Query("SELECT * FROM favorites WHERE folderId = :folderId")
+    suspend fun getFavoritesInFolder(folderId: String): List<FavoriteEntity>
+
+    /**
+     * Удалить все избранные элементы
+     */
+    @Query("DELETE FROM favorites")
+    suspend fun deleteAllFavorites()
+
+    /**
+     * Удалить избранные элементы по типу
+     */
+    @Query("DELETE FROM favorites WHERE contentType = :contentType")
+    suspend fun deleteFavoritesByType(contentType: String)
+
+    /**
+     * Очистить папку (удалить ссылки на папку)
+     */
+    @Query("UPDATE favorites SET folderId = NULL WHERE folderId = :folderId")
+    suspend fun clearFolder(folderId: String)
 } 
