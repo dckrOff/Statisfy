@@ -216,7 +216,6 @@ class FavoritesRepositoryImpl @Inject constructor(
     }
 
     // УПРАВЛЕНИЕ ПАПКАМИ - базовая реализация
-
     override suspend fun createFolder(folder: FavoriteFolder): Result<Unit> {
         return try {
             val folderEntity = FavoriteFolderEntity.fromDomainModel(folder)

@@ -136,7 +136,7 @@ data class FavoriteEntity(
                 categoryId = news.category.id,
                 categoryName = news.category.name,
                 folderId = folderId,
-                addedAt = news.createdAt ?: news.publishedAt,
+                addedAt = (news.createdAt ?: news.publishedAt).toString(),
                 metadata = mapOf(
                     "type" to "news",
                     "url" to news.url

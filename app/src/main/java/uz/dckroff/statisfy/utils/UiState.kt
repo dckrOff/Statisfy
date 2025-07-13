@@ -7,12 +7,12 @@ sealed class UiState<out T> {
     /**
      * Состояние ожидания (ничего не происходит)
      */
-    object Idle : UiState<Nothing>()
+    data object Idle : UiState<Nothing>()
     
     /**
      * Состояние загрузки
      */
-    object Loading : UiState<Nothing>()
+    data object Loading : UiState<Nothing>()
     
     /**
      * Успешное состояние с данными

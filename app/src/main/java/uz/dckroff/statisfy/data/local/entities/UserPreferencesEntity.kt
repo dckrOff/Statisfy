@@ -28,15 +28,23 @@ data class UserPreferencesEntity(
     val enablePersonalizedRecommendations: Boolean = true,
     
     // Notification Settings
-    val enablePushNotifications: Boolean = true,
+    val notificationsEnabled: Boolean = true,
+    val soundEnabled: Boolean = true,
+    val vibrationEnabled: Boolean = true,
+    val lightsEnabled: Boolean = true,
+    val dailyFactEnabled: Boolean = true,
     val dailyFactTime: String = "09:00",
-    val enableNewsNotifications: Boolean = true,
-    val newsNotificationFrequency: String = NotificationFrequency.DAILY.name,
-    val enableRecommendations: Boolean = true,
-    val enableActivityReminders: Boolean = true,
+    val newsNotificationsEnabled: Boolean = true,
+    val newsCategories: List<String> = emptyList(),
+    val newsMaxPerDay: Int = 3,
+    val recommendationsEnabled: Boolean = true,
+    val recommendationsFrequency: String = RecommendationFrequency.WEEKLY.name,
+    val inactivityRemindersEnabled: Boolean = true,
+    val inactivityThresholdDays: Int = 3,
+    val quietHoursEnabled: Boolean = false,
     val quietHoursStart: String = "22:00",
     val quietHoursEnd: String = "08:00",
-    val notificationCategories: List<String> = emptyList(),
+    val enabledDaysOfWeek: List<String> = DayOfWeek.values().map { it.name },
     
     // Display Settings
     val theme: String = AppTheme.SYSTEM.name,
@@ -89,15 +97,33 @@ data class UserPreferencesEntity(
                 enablePersonalizedRecommendations = enablePersonalizedRecommendations
             ),
             notificationSettings = NotificationSettings(
-                enablePushNotifications = enablePushNotifications,
-                dailyFactTime = dailyFactTime,
-                enableNewsNotifications = enableNewsNotifications,
-                newsNotificationFrequency = NotificationFrequency.valueOf(newsNotificationFrequency),
-                enableRecommendations = enableRecommendations,
-                enableActivityReminders = enableActivityReminders,
-                quietHoursStart = quietHoursStart,
-                quietHoursEnd = quietHoursEnd,
-                notificationCategories = notificationCategories
+                notificationsEnabled = notificationsEnabled,
+                soundEnabled = soundEnabled,
+                vibrationEnabled = vibrationEnabled,
+                lightsEnabled = lightsEnabled,
+                dailyFactEnabled = dailyFactEnabled,
+                dailyFactTime = NotificationTime.fromString(dailyFactTime) ?: NotificationTime(9, 0),
+                newsNotificationsEnabled = newsNotificationsEnabled,
+                newsCategories = newsCategories.toSet(),
+                newsMaxPerDay = newsMaxPerDay,
+                recommendationsEnabled = recommendationsEnabled,
+                recommendationsFrequency = try {
+                    RecommendationFrequency.valueOf(recommendationsFrequency)
+                } catch (e: Exception) {
+                    RecommendationFrequency.WEEKLY
+                },
+                inactivityRemindersEnabled = inactivityRemindersEnabled,
+                inactivityThresholdDays = inactivityThresholdDays,
+                quietHoursEnabled = quietHoursEnabled,
+                quietHoursStart = NotificationTime.fromString(quietHoursStart) ?: NotificationTime(22, 0),
+                quietHoursEnd = NotificationTime.fromString(quietHoursEnd) ?: NotificationTime(8, 0),
+                enabledDaysOfWeek = enabledDaysOfWeek.mapNotNull {
+                    try {
+                        DayOfWeek.valueOf(it)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }.toSet()
             ),
             displaySettings = DisplaySettings(
                 theme = AppTheme.valueOf(theme),
@@ -142,15 +168,23 @@ data class UserPreferencesEntity(
                 enablePersonalizedRecommendations = preferences.contentPreferences.enablePersonalizedRecommendations,
                 
                 // Notification Settings
-                enablePushNotifications = preferences.notificationSettings.enablePushNotifications,
-                dailyFactTime = preferences.notificationSettings.dailyFactTime,
-                enableNewsNotifications = preferences.notificationSettings.enableNewsNotifications,
-                newsNotificationFrequency = preferences.notificationSettings.newsNotificationFrequency.name,
-                enableRecommendations = preferences.notificationSettings.enableRecommendations,
-                enableActivityReminders = preferences.notificationSettings.enableActivityReminders,
-                quietHoursStart = preferences.notificationSettings.quietHoursStart,
-                quietHoursEnd = preferences.notificationSettings.quietHoursEnd,
-                notificationCategories = preferences.notificationSettings.notificationCategories,
+                notificationsEnabled = preferences.notificationSettings.notificationsEnabled,
+                soundEnabled = preferences.notificationSettings.soundEnabled,
+                vibrationEnabled = preferences.notificationSettings.vibrationEnabled,
+                lightsEnabled = preferences.notificationSettings.lightsEnabled,
+                dailyFactEnabled = preferences.notificationSettings.dailyFactEnabled,
+                dailyFactTime = preferences.notificationSettings.dailyFactTime.toString(),
+                newsNotificationsEnabled = preferences.notificationSettings.newsNotificationsEnabled,
+                newsCategories = preferences.notificationSettings.newsCategories.toList(),
+                newsMaxPerDay = preferences.notificationSettings.newsMaxPerDay,
+                recommendationsEnabled = preferences.notificationSettings.recommendationsEnabled,
+                recommendationsFrequency = preferences.notificationSettings.recommendationsFrequency.name,
+                inactivityRemindersEnabled = preferences.notificationSettings.inactivityRemindersEnabled,
+                inactivityThresholdDays = preferences.notificationSettings.inactivityThresholdDays,
+                quietHoursEnabled = preferences.notificationSettings.quietHoursEnabled,
+                quietHoursStart = preferences.notificationSettings.quietHoursStart.toString(),
+                quietHoursEnd = preferences.notificationSettings.quietHoursEnd.toString(),
+                enabledDaysOfWeek = preferences.notificationSettings.enabledDaysOfWeek.map { it.name },
                 
                 // Display Settings
                 theme = preferences.displaySettings.theme.name,

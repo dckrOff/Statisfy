@@ -121,8 +121,8 @@ class NewsDetailFragment : Fragment() {
             textViewCategory.text = news.category.name
             
             // Дата публикации
-            textViewDate.text = getRelativeTimeString(news.publishedAt)
-            textViewDateFull.text = formatDateTime(news.publishedAt)
+            textViewDate.text = getRelativeTimeString(news.publishedAt.toString())
+            textViewDateFull.text = formatDateTime(news.publishedAt.toString())
             
             // Загрузка изображения
             if (!news.imageUrl.isNullOrEmpty()) {

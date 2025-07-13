@@ -99,6 +99,7 @@ class HomeFragment : Fragment() {
                     is UiState.Loading -> showLoading()
                     is UiState.Success -> showContent(state.data)
                     is UiState.Error -> showError(state.message)
+                    UiState.Idle -> TODO()
                 }
             }
         }

@@ -11,7 +11,7 @@ data class News(
     val url: String,
     val imageUrl: String? = null,
     val source: String,
-    val publishedAt: String,
+    val publishedAt: String? = null,
     val isRelevant: Boolean = false,
     val category: Category,
     val createdAt: String? = null,

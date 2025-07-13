@@ -67,7 +67,7 @@ data class NewsEntity(
                 url = news.url,
                 imageUrl = news.imageUrl,
                 source = news.source,
-                publishedAt = news.publishedAt,
+                publishedAt = news.publishedAt.toString(),
                 categoryId = news.category.id,
                 isRelevant = news.isRelevant,
                 createdAt = news.createdAt ?: "",

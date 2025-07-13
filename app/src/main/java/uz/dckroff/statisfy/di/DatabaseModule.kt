@@ -10,8 +10,10 @@ import dagger.hilt.components.SingletonComponent
 import uz.dckroff.statisfy.data.local.dao.CategoryDao
 import uz.dckroff.statisfy.data.local.dao.FactDao
 import uz.dckroff.statisfy.data.local.dao.FavoriteDao
+import uz.dckroff.statisfy.data.local.dao.FavoriteFolderDao
 import uz.dckroff.statisfy.data.local.dao.NewsDao
 import uz.dckroff.statisfy.data.local.dao.UserDao
+import uz.dckroff.statisfy.data.local.dao.UserPreferencesDao
 import uz.dckroff.statisfy.data.local.database.AppDatabase
 import javax.inject.Singleton
 
@@ -21,7 +23,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
-    
+
     /**
      * Предоставляет базу данных Room
      */
@@ -34,7 +36,7 @@ object DatabaseModule {
             "statisfy_database"
         ).fallbackToDestructiveMigration().build()
     }
-    
+
     /**
      * Предоставляет DAO для работы с пользователями
      */
@@ -43,7 +45,7 @@ object DatabaseModule {
     fun provideUserDao(appDatabase: AppDatabase): UserDao {
         return appDatabase.userDao()
     }
-    
+
     /**
      * Предоставляет DAO для работы с фактами
      */
@@ -52,7 +54,7 @@ object DatabaseModule {
     fun provideFactDao(appDatabase: AppDatabase): FactDao {
         return appDatabase.factDao()
     }
-    
+
     /**
      * Предоставляет DAO для работы с категориями
      */
@@ -61,7 +63,7 @@ object DatabaseModule {
     fun provideCategoryDao(appDatabase: AppDatabase): CategoryDao {
         return appDatabase.categoryDao()
     }
-    
+
     /**
      * Предоставляет DAO для работы с избранным
      */
@@ -72,11 +74,29 @@ object DatabaseModule {
     }
     
     /**
+     * Предоставляет DAO для работы с папками избранного
+     */
+    @Provides
+    @Singleton
+    fun provideFavoriteFolderDao(appDatabase: AppDatabase): FavoriteFolderDao {
+        return appDatabase.favoriteFolderDao()
+    }
+
+    /**
      * Предоставляет DAO для работы с новостями
      */
     @Provides
     @Singleton
     fun provideNewsDao(appDatabase: AppDatabase): NewsDao {
         return appDatabase.newsDao()
+    }
+    
+    /**
+     * Предоставляет DAO для работы с пользовательскими настройками
+     */
+    @Provides
+    @Singleton
+    fun provideUserPreferencesDao(appDatabase: AppDatabase): UserPreferencesDao {
+        return appDatabase.userPreferencesDao()
     }
 } 

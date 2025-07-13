@@ -13,19 +13,19 @@ interface NewsApi {
     /**
      * Получить список новостей с пагинацией
      */
-    @GET("news")
+    @GET("api/news")
     suspend fun getNews(
-        @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 10,
-        @Query("category") category: String? = null,
-        @Query("search") search: String? = null,
-        @Query("sort") sort: String = "date_desc"
+//        @Query("page") page: Int = 1,
+//        @Query("limit") limit: Int = 10,
+//        @Query("category") category: String? = null,
+//        @Query("search") search: String? = null,
+//        @Query("sort") sort: String = "date_desc"
     ): Response<NewsListResponse>
     
     /**
      * Получить конкретную новость по ID
      */
-    @GET("news/{id}")
+    @GET("api/news/{id}")
     suspend fun getNewsById(
         @Path("id") id: String
     ): Response<NewsDto>
@@ -33,7 +33,7 @@ interface NewsApi {
     /**
      * Получить релевантные новости
      */
-    @GET("news/relevant")
+    @GET("api/news/relevant")
     suspend fun getRelevantNews(
         @Query("limit") limit: Int = 10
     ): Response<NewsListResponse>
@@ -41,7 +41,7 @@ interface NewsApi {
     /**
      * Получить новости по категории
      */
-    @GET("news/category/{categoryId}")
+    @GET("api/news/category/{categoryId}")
     suspend fun getNewsByCategory(
         @Path("categoryId") categoryId: String,
         @Query("page") page: Int = 1,
@@ -51,7 +51,7 @@ interface NewsApi {
     /**
      * Поиск новостей
      */
-    @GET("news/search")
+    @GET("api/news/search")
     suspend fun searchNews(
         @Query("q") query: String,
         @Query("page") page: Int = 1,
@@ -62,7 +62,7 @@ interface NewsApi {
     /**
      * Получить популярные новости
      */
-    @GET("news/popular")
+    @GET("api/news/popular")
     suspend fun getPopularNews(
         @Query("limit") limit: Int = 10,
         @Query("period") period: String = "week" // day, week, month
@@ -71,7 +71,7 @@ interface NewsApi {
     /**
      * Отметить новость как прочитанную
      */
-    @POST("news/{id}/read")
+    @POST("api/news/{id}/read")
     suspend fun markAsRead(
         @Path("id") id: String
     ): Response<Unit>

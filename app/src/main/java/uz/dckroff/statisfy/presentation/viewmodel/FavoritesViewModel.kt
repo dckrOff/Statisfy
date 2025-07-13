@@ -23,37 +23,37 @@ class FavoritesViewModel @Inject constructor(
     // UI State
     private val _uiState = MutableStateFlow<UiState<FavoritesData>>(UiState.Loading)
     val uiState: StateFlow<UiState<FavoritesData>> = _uiState.asStateFlow()
-    
+
     // Search and Filter State
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
-    
+
     private val _selectedContentTypes = MutableStateFlow<Set<ContentType>>(emptySet())
     val selectedContentTypes: StateFlow<Set<ContentType>> = _selectedContentTypes.asStateFlow()
-    
+
     private val _selectedFolder = MutableStateFlow<String?>(null)
     val selectedFolder: StateFlow<String?> = _selectedFolder.asStateFlow()
-    
+
     private val _sortBy = MutableStateFlow(FavoritesSortBy.RECENT)
     val sortBy: StateFlow<FavoritesSortBy> = _sortBy.asStateFlow()
-    
+
     private val _viewMode = MutableStateFlow(FavoritesViewMode.LIST)
     val viewMode: StateFlow<FavoritesViewMode> = _viewMode.asStateFlow()
-    
+
     // Folders State
     private val _folders = MutableStateFlow<List<FavoriteFolder>>(emptyList())
     val folders: StateFlow<List<FavoriteFolder>> = _folders.asStateFlow()
-    
+
     private val _selectedItems = MutableStateFlow<Set<String>>(emptySet())
     val selectedItems: StateFlow<Set<String>> = _selectedItems.asStateFlow()
-    
+
     // Actions State
     private val _isSelectionMode = MutableStateFlow(false)
     val isSelectionMode: StateFlow<Boolean> = _isSelectionMode.asStateFlow()
-    
+
     private val _showFolderDialog = MutableStateFlow(false)
     val showFolderDialog: StateFlow<Boolean> = _showFolderDialog.asStateFlow()
-    
+
     // Messages
     private val _message = MutableSharedFlow<String>()
     val message: SharedFlow<String> = _message.asSharedFlow()
@@ -69,7 +69,7 @@ class FavoritesViewModel @Inject constructor(
     private fun loadFavoritesData() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            
+
             try {
                 favoritesRepository.getFavoritesData()
                     .combine(searchQuery) { data, query ->
@@ -85,7 +85,8 @@ class FavoritesViewModel @Inject constructor(
                         sortFavoritesData(data, sort)
                     }
                     .catch { exception ->
-                        _uiState.value = UiState.Error("Ошибка загрузки избранного: ${exception.message}")
+                        _uiState.value =
+                            UiState.Error("Ошибка загрузки избранного: ${exception.message}")
                     }
                     .collect { filteredData ->
                         _uiState.value = UiState.Success(filteredData)
@@ -173,15 +174,15 @@ class FavoritesViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val result = favoritesRepository.removeFromFavorites(itemId)
-                result.fold(
-                    onSuccess = {
+                result
+                    .onSuccess {
                         _message.emit("Удалено из избранного")
                         recordUnfavoriteEvent(itemId)
-                    },
-                    onFailure = { error ->
-                        _message.emit("Ошибка удаления: ${error.message}")
                     }
-                )
+                    .onFailure { error ->
+                        _message.emit("Ошибка удаления: $error")
+                    }
+
             } catch (e: Exception) {
                 _message.emit("Ошибка: ${e.message}")
             }
@@ -222,7 +223,12 @@ class FavoritesViewModel @Inject constructor(
     /**
      * Создание новой папки
      */
-    fun createFolder(name: String, description: String?, color: String?, contentTypes: Set<ContentType>) {
+    fun createFolder(
+        name: String,
+        description: String?,
+        color: String?,
+        contentTypes: Set<ContentType>
+    ) {
         viewModelScope.launch {
             try {
                 val folder = FavoriteFolder(
@@ -233,17 +239,17 @@ class FavoritesViewModel @Inject constructor(
                     contentTypes = contentTypes,
                     createdAt = System.currentTimeMillis().toString()
                 )
-                
+
                 val result = favoritesRepository.createFolder(folder)
-                result.fold(
-                    onSuccess = {
+                result
+                    .onSuccess {
                         _message.emit("Папка \"$name\" создана")
                         _showFolderDialog.value = false
-                    },
-                    onFailure = { error ->
-                        _message.emit("Ошибка создания папки: ${error.message}")
                     }
-                )
+                    .onFailure { error ->
+                        _message.emit("Ошибка создания папки: ${error}")
+                    }
+
             } catch (e: Exception) {
                 _message.emit("Ошибка: ${e.message}")
             }
@@ -257,17 +263,17 @@ class FavoritesViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val result = favoritesRepository.deleteFolder(folderId)
-                result.fold(
-                    onSuccess = {
+                result
+                    .onSuccess {
                         _message.emit("Папка удалена")
                         if (_selectedFolder.value == folderId) {
                             _selectedFolder.value = null
                         }
-                    },
-                    onFailure = { error ->
-                        _message.emit("Ошибка удаления папки: ${error.message}")
                     }
-                )
+                    .onFailure { error ->
+                        _message.emit("Ошибка удаления папки: ${error}")
+                    }
+
             } catch (e: Exception) {
                 _message.emit("Ошибка: ${e.message}")
             }
@@ -281,17 +287,17 @@ class FavoritesViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val result = favoritesRepository.moveToFolder(itemId, folderId)
-                result.fold(
-                    onSuccess = {
+                result
+                    .onSuccess {
                         val folderName = if (folderId != null) {
                             _folders.value.find { it.id == folderId }?.name ?: "папку"
                         } else "общие элементы"
                         _message.emit("Перемещено в $folderName")
-                    },
-                    onFailure = { error ->
-                        _message.emit("Ошибка перемещения: ${error.message}")
                     }
-                )
+                    .onFailure { error ->
+                        _message.emit("Ошибка перемещения: ${error}")
+                    }
+
             } catch (e: Exception) {
                 _message.emit("Ошибка: ${e.message}")
             }
@@ -327,7 +333,7 @@ class FavoritesViewModel @Inject constructor(
             current.add(itemId)
         }
         _selectedItems.value = current
-        
+
         // Выключаем режим выбора, если ничего не выбрано
         if (current.isEmpty()) {
             _isSelectionMode.value = false
@@ -355,7 +361,7 @@ class FavoritesViewModel @Inject constructor(
                 selectedIds.forEach { itemId ->
                     favoritesRepository.removeFromFavorites(itemId)
                 }
-                
+
                 _message.emit("Удалено ${selectedIds.size} элементов")
                 disableSelectionMode()
             } catch (e: Exception) {
@@ -372,18 +378,17 @@ class FavoritesViewModel @Inject constructor(
             try {
                 val selectedIds = _selectedItems.value.toList()
                 val result = favoritesRepository.moveItemsToFolder(selectedIds, folderId)
-                result.fold(
-                    onSuccess = {
+                result
+                    .onSuccess {
                         val folderName = if (folderId != null) {
                             _folders.value.find { it.id == folderId }?.name ?: "папку"
                         } else "общие элементы"
                         _message.emit("${selectedIds.size} элементов перемещено в $folderName")
                         disableSelectionMode()
-                    },
-                    onFailure = { error ->
-                        _message.emit("Ошибка перемещения: ${error.message}")
                     }
-                )
+                    .onFailure { error ->
+                        _message.emit("Ошибка перемещения: ${error}")
+                    }
             } catch (e: Exception) {
                 _message.emit("Ошибка: ${e.message}")
             }
@@ -399,15 +404,15 @@ class FavoritesViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val result = favoritesRepository.exportFavorites()
-                result.fold(
-                    onSuccess = { exportData ->
+                result
+                    .onSuccess { exportData ->
                         _message.emit("Избранное экспортировано")
                         // Здесь можно добавить логику сохранения файла или отправки
-                    },
-                    onFailure = { error ->
-                        _message.emit("Ошибка экспорта: ${error.message}")
                     }
-                )
+                    .onFailure { error ->
+                        _message.emit("Ошибка экспорта: ${error}")
+                    }
+
             } catch (e: Exception) {
                 _message.emit("Ошибка: ${e.message}")
             }
@@ -422,14 +427,13 @@ class FavoritesViewModel @Inject constructor(
             try {
                 _message.emit("Синхронизация...")
                 val result = favoritesRepository.syncFavorites()
-                result.fold(
-                    onSuccess = {
+                result
+                    .onSuccess {
                         _message.emit("Синхронизация завершена")
-                    },
-                    onFailure = { error ->
-                        _message.emit("Ошибка синхронизации: ${error.message}")
                     }
-                )
+                    .onFailure { error ->
+                        _message.emit("Ошибка синхронизации: ${error}")
+                    }
             } catch (e: Exception) {
                 _message.emit("Ошибка: ${e.message}")
             }
@@ -464,20 +468,20 @@ class FavoritesViewModel @Inject constructor(
 
     private fun filterByQuery(data: FavoritesData, query: String): FavoritesData {
         if (query.isBlank()) return data
-        
+
         val filteredGrouped = data.groupedContent.mapValues { (_, items) ->
             items.filter { item ->
                 item.title.contains(query, ignoreCase = true) ||
-                item.summary?.contains(query, ignoreCase = true) == true ||
-                item.tags.any { tag -> tag.contains(query, ignoreCase = true) }
+                        item.summary?.contains(query, ignoreCase = true) == true ||
+                        item.tags.any { tag -> tag.contains(query, ignoreCase = true) }
             }
         }.filterValues { it.isNotEmpty() }
-        
+
         return data.copy(
             groupedContent = filteredGrouped,
             recentItems = data.recentItems.filter { item ->
                 item.title.contains(query, ignoreCase = true) ||
-                item.summary?.contains(query, ignoreCase = true) == true
+                        item.summary?.contains(query, ignoreCase = true) == true
             }
         )
     }
@@ -486,7 +490,7 @@ class FavoritesViewModel @Inject constructor(
         val filteredGrouped = data.groupedContent.filterKeys { key ->
             types.contains(key)
         }
-        
+
         return data.copy(
             groupedContent = filteredGrouped,
             recentItems = data.recentItems.filter { types.contains(it.contentType) }
@@ -497,7 +501,7 @@ class FavoritesViewModel @Inject constructor(
         val filteredGrouped = data.groupedContent.mapValues { (_, items) ->
             items.filter { it.folderId == folderId }
         }.filterValues { it.isNotEmpty() }
-        
+
         return data.copy(
             groupedContent = filteredGrouped,
             recentItems = data.recentItems.filter { it.folderId == folderId }
@@ -514,15 +518,17 @@ class FavoritesViewModel @Inject constructor(
                 FavoritesSortBy.LAST_VIEWED -> items.sortedByDescending { it.lastViewedAt ?: "" }
             }
         }
-        
+
         val sortedRecent = when (sortBy) {
             FavoritesSortBy.RECENT -> data.recentItems.sortedByDescending { it.addedAt }
             FavoritesSortBy.ALPHABETICAL -> data.recentItems.sortedBy { it.title }
             FavoritesSortBy.CATEGORY -> data.recentItems.sortedBy { it.category?.name ?: "" }
             FavoritesSortBy.CONTENT_TYPE -> data.recentItems.sortedBy { it.contentType.displayName }
-            FavoritesSortBy.LAST_VIEWED -> data.recentItems.sortedByDescending { it.lastViewedAt ?: "" }
+            FavoritesSortBy.LAST_VIEWED -> data.recentItems.sortedByDescending {
+                it.lastViewedAt ?: ""
+            }
         }
-        
+
         return data.copy(
             groupedContent = sortedGrouped,
             recentItems = sortedRecent

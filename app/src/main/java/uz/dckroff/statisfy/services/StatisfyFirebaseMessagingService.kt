@@ -22,7 +22,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class StatisfyFirebaseMessagingService : FirebaseMessagingService() {
 
-    @Inject
+//    @Inject
     lateinit var notificationRepository: NotificationRepository
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

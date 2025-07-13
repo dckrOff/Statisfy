@@ -29,20 +29,20 @@ import uz.dckroff.statisfy.utils.visible
  */
 @AndroidEntryPoint
 class FactsFragment : Fragment() {
-    
+
     private var _binding: FragmentFactsBinding? = null
     private val binding get() = _binding!!
-    
+
     private val viewModel: FactsViewModel by viewModels()
-    
+
     private lateinit var factsAdapter: FactAdapter
-    
+
     // Текущая выбранная категория
     private var currentCategoryId: String? = null
-    
+
     // Текущая страница пагинации
     private var currentPage = 0
-    
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,29 +51,30 @@ class FactsFragment : Fragment() {
         _binding = FragmentFactsBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         setupUI()
         setupRecyclerView()
         observeViewModel()
         loadData()
     }
-    
+
     private fun setupUI() {
         // Настройка тулбара
         binding.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
-        
+
         // Настройка поисковой панели
         binding.searchBar.setOnClickListener {
             // TODO: Реализовать поиск
-            Toast.makeText(requireContext(), "Поиск будет реализован в этапе 8", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Поиск будет реализован в этапе 8", Toast.LENGTH_SHORT)
+                .show()
         }
     }
-    
+
     private fun setupRecyclerView() {
         factsAdapter = FactAdapter(
             onFactClick = { fact ->
@@ -86,33 +87,39 @@ class FactsFragment : Fragment() {
                 viewModel.toggleFavorite()
             }
         )
-        
+
         binding.factsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = factsAdapter
             setHasFixedSize(true)
-            
+
             // Добавляем обработку прокрутки для пагинации
-            addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+            addOnScrollListener(object :
+                androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+                override fun onScrolled(
+                    recyclerView: androidx.recyclerview.widget.RecyclerView,
+                    dx: Int,
+                    dy: Int
+                ) {
                     super.onScrolled(recyclerView, dx, dy)
-                    
+
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val visibleItemCount = layoutManager.childCount
                     val totalItemCount = layoutManager.itemCount
                     val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                    
+
                     // Если пользователь прокрутил до конца списка, загружаем следующую страницу
                     if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                         && firstVisibleItemPosition >= 0
-                        && totalItemCount >= 20) {
+                        && totalItemCount >= 20
+                    ) {
                         loadMoreFacts()
                     }
                 }
             })
         }
     }
-    
+
     private fun observeViewModel() {
         // Наблюдение за состоянием фактов
         viewLifecycleOwner.lifecycleScope.launch {
@@ -123,16 +130,22 @@ class FactsFragment : Fragment() {
                             showLoading()
                         }
                     }
+
                     is UiState.Success -> {
                         showContent(state.data)
                     }
+
                     is UiState.Error -> {
                         showError(state.message)
+                    }
+
+                    else -> {
+                        TODO()
                     }
                 }
             }
         }
-        
+
         // Наблюдение за категориями
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.categoriesState.collectLatest { state ->
@@ -140,37 +153,45 @@ class FactsFragment : Fragment() {
                     is UiState.Loading -> {
                         // Обрабатываем загрузку категорий
                     }
+
                     is UiState.Success -> {
                         setupCategories(state.data)
                     }
+
                     is UiState.Error -> {
                         // Показываем сообщение об ошибке загрузки категорий
                     }
+
+                    UiState.Idle -> TODO()
                 }
             }
         }
     }
-    
+
     private fun setupCategories(categories: List<Category>) {
         // Очищаем контейнер категорий
         binding.categoriesContainer.removeAllViews()
-        
+
         // Добавляем чип "Все" для отображения всех фактов
         val allChip = createCategoryChip(null, "Все", true)
         binding.categoriesContainer.addView(allChip)
-        
+
         // Добавляем чипы для каждой категории
         categories.forEach { category ->
             val chip = createCategoryChip(category.id, category.name, false)
             binding.categoriesContainer.addView(chip)
         }
     }
-    
-    private fun createCategoryChip(categoryId: String?, categoryName: String, isChecked: Boolean): Chip {
+
+    private fun createCategoryChip(
+        categoryId: String?,
+        categoryName: String,
+        isChecked: Boolean
+    ): Chip {
         val chip = layoutInflater.inflate(
             R.layout.item_category_chip, binding.categoriesContainer, false
         ) as Chip
-        
+
         chip.text = categoryName
         chip.isChecked = isChecked
         chip.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -182,57 +203,61 @@ class FactsFragment : Fragment() {
                         otherChip?.isChecked = false
                     }
                 }
-                
+
                 // Устанавливаем текущую категорию и загружаем факты
                 currentCategoryId = categoryId
                 currentPage = 0
                 loadData()
             }
         }
-        
+
         return chip
     }
-    
+
     private fun loadData() {
         viewModel.getFacts(page = currentPage, categoryId = currentCategoryId)
         if (currentPage == 0) {
             viewModel.getCategories()
         }
     }
-    
+
     private fun loadMoreFacts() {
         currentPage++
         loadData()
     }
-    
+
     private fun showLoading() {
         binding.progressBar.visible()
     }
-    
+
     private fun showContent(facts: List<uz.dckroff.statisfy.domain.model.Fact>) {
         binding.progressBar.gone()
         factsAdapter.submitList(facts)
     }
-    
+
     private fun showError(message: String) {
         binding.progressBar.gone()
         Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
     }
-    
+
     private fun navigateToFactDetail(factId: String) {
         try {
             val directions = FactsFragmentDirections.actionFactsFragmentToFactDetailFragment(factId)
             findNavController().navigate(directions)
         } catch (e: Exception) {
             Logger.e("FactsFragment: Error navigating to fact detail", e)
-            Toast.makeText(requireContext(), "Ошибка при открытии деталей факта", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Ошибка при открытии деталей факта",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
-    
+
     private fun shareFactContent(factId: String) {
         viewModel.shareFact(factId, requireContext())
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

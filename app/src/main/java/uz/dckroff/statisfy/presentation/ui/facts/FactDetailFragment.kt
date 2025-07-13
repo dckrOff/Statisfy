@@ -33,10 +33,10 @@ class FactDetailFragment : Fragment() {
 
     private var _binding: FragmentFactDetailBinding? = null
     private val binding get() = _binding!!
-    
+
     private val viewModel: FactsViewModel by viewModels()
     private val args: FactDetailFragmentArgs by navArgs()
-    
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -52,35 +52,35 @@ class FactDetailFragment : Fragment() {
         loadFactDetails()
         observeViewModel()
     }
-    
+
     private fun setupUI() {
         // Настройка тулбара
         binding.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
-        
+
         // Настройка кнопок действий
         binding.btnShare.setOnClickListener {
             viewModel.currentFact.value?.let { fact ->
                 shareFact(fact)
             }
         }
-        
+
         binding.btnFavorite.setOnClickListener {
             viewModel.toggleFavorite()
         }
-        
+
         binding.btnCopy.setOnClickListener {
             viewModel.currentFact.value?.let { fact ->
                 copyFactToClipboard(fact)
             }
         }
     }
-    
+
     private fun loadFactDetails() {
         viewModel.getFactById(args.factId)
     }
-    
+
     private fun observeViewModel() {
         // Наблюдение за состоянием факта
         viewLifecycleOwner.lifecycleScope.launch {
@@ -89,10 +89,13 @@ class FactDetailFragment : Fragment() {
                     is UiState.Loading -> showLoading()
                     is UiState.Success -> showContent(state.data)
                     is UiState.Error -> showError(state.message)
+                    else -> {
+                        TODO()
+                    }
                 }
             }
         }
-        
+
         // Наблюдение за состоянием избранного
         viewModel.isFavorite.observe(viewLifecycleOwner) { isFavorite ->
             binding.btnFavorite.setIconResource(
@@ -101,7 +104,7 @@ class FactDetailFragment : Fragment() {
             )
         }
     }
-    
+
     private fun showLoading() {
         binding.apply {
             progressBar.visible()
@@ -109,25 +112,25 @@ class FactDetailFragment : Fragment() {
             errorLayout.gone()
         }
     }
-    
+
     private fun showContent(fact: Fact) {
         binding.apply {
             progressBar.gone()
             contentLayout.visible()
             errorLayout.gone()
-            
+
             // Отображаем детали факта
             tvFactTitle.text = fact.title
             tvFactContent.text = fact.content
             tvFactCategory.text = fact.category.name
             tvFactSource.text = "Источник: ${fact.source}"
             tvFactDate.text = "Опубликовано: ${fact.createdAt}"
-            
+
             // Проверяем статус избранного для этого факта
             viewModel.checkFavoriteStatus(fact.id)
         }
     }
-    
+
     private fun shareFact(fact: Fact) {
         val shareText = "${fact.title}\n\n${fact.content}\n\nИсточник: ${fact.source}"
         val sendIntent = Intent().apply {
@@ -138,20 +141,22 @@ class FactDetailFragment : Fragment() {
         val shareIntent = Intent.createChooser(sendIntent, "Поделиться фактом")
         startActivity(shareIntent)
     }
-    
+
     private fun copyFactToClipboard(fact: Fact) {
-        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard =
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Факт", "${fact.title}\n\n${fact.content}")
         clipboard.setPrimaryClip(clip)
-        Toast.makeText(requireContext(), "Факт скопирован в буфер обмена", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Факт скопирован в буфер обмена", Toast.LENGTH_SHORT)
+            .show()
     }
-    
+
     private fun showError(message: String) {
         binding.apply {
             progressBar.gone()
             contentLayout.gone()
             errorLayout.visible()
-            
+
             tvErrorMessage.text = message
             btnRetry.setOnClickListener {
                 loadFactDetails()

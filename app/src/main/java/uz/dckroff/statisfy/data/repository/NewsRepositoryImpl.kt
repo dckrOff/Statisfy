@@ -40,13 +40,14 @@ class NewsRepositoryImpl @Inject constructor(
         sort: String
     ): Resource<NewsData> {
         return try {
-            val response = newsApi.getNews(page, limit, category, search, sort)
+            val response = newsApi.getNews()
             
             if (response.isSuccessful) {
                 val newsListResponse = response.body()
                 if (newsListResponse != null) {
-                    val newsList = newsListResponse.data.map { it.toDomainModel() }
-                    
+                    val newsList = newsListResponse.data?.map { it.toDomainModel() } ?: emptyList()
+
+
                     // Сохранить в локальную БД для кэширования
                     saveNewsToLocal(newsList)
                     
@@ -348,7 +349,7 @@ class NewsRepositoryImpl @Inject constructor(
      */
     override suspend fun syncNews(): Resource<Unit> {
         return try {
-            val response = newsApi.getNews(page = 1, limit = DEFAULT_CACHE_SIZE)
+            val response = newsApi.getNews()
             
             if (response.isSuccessful) {
                 val newsListResponse = response.body()

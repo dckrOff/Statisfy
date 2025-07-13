@@ -2,6 +2,7 @@ package uz.dckroff.statisfy.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -46,7 +47,7 @@ class NewsAdapter(
                 textViewCategory.text = news.category.name
                 
                 // Дата публикации
-                textViewDate.text = formatDate(news.publishedAt)
+                textViewDate.text = formatDate(news.publishedAt.toString())
                 
                 // Загрузка изображения
                 if (!news.imageUrl.isNullOrEmpty()) {
@@ -57,11 +58,12 @@ class NewsAdapter(
                         .centerCrop()
                         .into(imageViewNews)
                 } else {
-                    imageViewNews.setImageResource(R.drawable.ic_news_placeholder)
+                    imageViewNews.setImageResource(R.drawable.ic_image_placeholder)
+                    imageViewNews.scaleType = ImageView.ScaleType.CENTER
                 }
                 
                 // Индикатор релевантности
-                chipRelevant.visibility = if (news.isRelevant) {
+                textViewRelevant.visibility = if (news.isRelevant) {
                     android.view.View.VISIBLE
                 } else {
                     android.view.View.GONE
@@ -139,7 +141,7 @@ class NewsSearchAdapter(
                 textViewSummary.text = news.summary
                 textViewSource.text = news.source
                 textViewCategory.text = news.category.name
-                textViewDate.text = formatDate(news.publishedAt)
+                textViewDate.text = formatDate(news.publishedAt.toString())
                 
                 // Для поиска можем скрыть некоторые элементы
                 buttonFavorite.visibility = android.view.View.GONE

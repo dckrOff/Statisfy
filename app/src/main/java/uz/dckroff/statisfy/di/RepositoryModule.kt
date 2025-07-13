@@ -10,6 +10,7 @@ import uz.dckroff.statisfy.data.local.dao.FavoriteDao
 import uz.dckroff.statisfy.data.local.dao.FavoriteFolderDao
 import uz.dckroff.statisfy.data.local.dao.NewsDao
 import uz.dckroff.statisfy.data.local.dao.UserDao
+import uz.dckroff.statisfy.data.local.dao.UserPreferencesDao
 import uz.dckroff.statisfy.data.remote.api.AuthApi
 import uz.dckroff.statisfy.data.remote.api.CategoryApi
 import uz.dckroff.statisfy.data.remote.api.FactApi
@@ -20,11 +21,15 @@ import uz.dckroff.statisfy.data.repository.CategoryRepositoryImpl
 import uz.dckroff.statisfy.data.repository.FactRepositoryImpl
 import uz.dckroff.statisfy.data.repository.FavoritesRepositoryImpl
 import uz.dckroff.statisfy.data.repository.NewsRepositoryImpl
+import uz.dckroff.statisfy.data.repository.UserPreferencesRepositoryImpl
+import uz.dckroff.statisfy.data.repository.UserStatsRepositoryImpl
 import uz.dckroff.statisfy.domain.repository.AuthRepository
 import uz.dckroff.statisfy.domain.repository.CategoryRepository
 import uz.dckroff.statisfy.domain.repository.FactRepository
 import uz.dckroff.statisfy.domain.repository.FavoritesRepository
 import uz.dckroff.statisfy.domain.repository.NewsRepository
+import uz.dckroff.statisfy.domain.repository.UserPreferencesRepository
+import uz.dckroff.statisfy.domain.repository.UserStatsRepository
 import uz.dckroff.statisfy.utils.NetworkChecker
 import uz.dckroff.statisfy.utils.PreferenceManager
 import javax.inject.Singleton
@@ -100,4 +105,24 @@ object RepositoryModule {
     ): NewsRepository {
         return NewsRepositoryImpl(newsApi, newsDao, categoryDao)
     }
-} 
+    
+    /**
+     * Предоставляет репозиторий статистики пользователя
+     */
+    @Provides
+    @Singleton
+    fun provideUserStatsRepository(): UserStatsRepository {
+        return UserStatsRepositoryImpl()
+    }
+    
+    /**
+     * Предоставляет репозиторий пользовательских предпочтений
+     */
+    @Provides
+    @Singleton
+    fun provideUserPreferencesRepository(
+        userPreferencesDao: UserPreferencesDao
+    ): UserPreferencesRepository {
+        return UserPreferencesRepositoryImpl(userPreferencesDao)
+    }
+}
