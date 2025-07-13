@@ -55,7 +55,6 @@
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="4dp"
                     android:fontFamily="@font/inter_medium"
-                    android:textColor="?attr/colorOnSecondaryContainer"
                     android:textSize="12sp"
                     tools:text="Население" />
 
@@ -82,13 +81,13 @@
             <TextView
                 android:id="@+id/textViewSource"
                 android:layout_width="0dp"
+                android:gravity="center|start"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/inter"
-                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="12sp"
-                android:drawableStart="@drawable/ic_source"
                 android:drawablePadding="4dp"
+                app:drawableStartCompat="@drawable/ic_source"
                 tools:text="Источник: Росстат" />
 
             <TextView
@@ -96,7 +95,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter"
-                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="12sp"
                 tools:text="2024-01-15" />
 

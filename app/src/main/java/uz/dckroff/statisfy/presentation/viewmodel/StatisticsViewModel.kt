@@ -1,5 +1,7 @@
 package uz.dckroff.statisfy.presentation.viewmodel
 
+import android.annotation.SuppressLint
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
     private val categoryRepository: CategoryRepository
-) : BaseViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(StatisticsUiState())
     val uiState: StateFlow<StatisticsUiState> = _uiState.asStateFlow()
@@ -38,7 +40,7 @@ class StatisticsViewModel @Inject constructor(
      */
     fun handleEvent(event: StatisticsEvent) {
         Logger.d("StatisticsViewModel: Processing event: ${event::class.simpleName}")
-        
+
         when (event) {
             is StatisticsEvent.LoadStatistics -> loadStatistics()
             is StatisticsEvent.RefreshStatistics -> refreshStatistics()
@@ -65,17 +67,17 @@ class StatisticsViewModel @Inject constructor(
 
                 // TODO: Заменить на реальный API вызов
                 // val result = statisticsRepository.getStatistics()
-                
+
                 // Временная заглушка с тестовыми данными
                 val mockStatistics = getMockStatistics()
-                
+
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     allStatistics = mockStatistics,
                     filteredStatistics = mockStatistics,
                     error = null
                 )
-                
+
             } catch (e: Exception) {
                 Logger.e("StatisticsViewModel: Exception loading statistics", e)
                 _uiState.value = _uiState.value.copy(
@@ -89,11 +91,11 @@ class StatisticsViewModel @Inject constructor(
     /**
      * Загрузка категорий
      */
-    private fun loadCategories() {
+    fun loadCategories() {
         viewModelScope.launch {
             try {
                 Logger.d("StatisticsViewModel: Loading categories")
-                
+
                 // TODO: Заменить на реальный API вызов
                 // when (val result = categoryRepository.getCategories()) {
                 //     is Result.Success -> {
@@ -103,11 +105,11 @@ class StatisticsViewModel @Inject constructor(
                 //         Logger.e("StatisticsViewModel: Error loading categories: ${result.exception.message}")
                 //     }
                 // }
-                
+
                 // Временная заглушка с тестовыми категориями
                 val mockCategories = getMockCategories()
                 _uiState.value = _uiState.value.copy(categories = mockCategories)
-                
+
             } catch (e: Exception) {
                 Logger.e("StatisticsViewModel: Exception loading categories", e)
             }
@@ -127,14 +129,14 @@ class StatisticsViewModel @Inject constructor(
      */
     private fun filterByCategory(category: Category?) {
         Logger.d("StatisticsViewModel: Filtering by category: ${category?.name}")
-        
+
         val allStats = _uiState.value.allStatistics
         val filteredStats = if (category == null) {
             allStats
         } else {
             allStats.filter { it.category.id == category.id }
         }
-        
+
         _uiState.value = _uiState.value.copy(
             selectedCategory = category,
             filteredStatistics = filteredStats,
@@ -147,18 +149,18 @@ class StatisticsViewModel @Inject constructor(
      */
     private fun searchStatistics(query: String) {
         Logger.d("StatisticsViewModel: Searching statistics: $query")
-        
+
         val allStats = _uiState.value.allStatistics
         val filteredStats = if (query.isBlank()) {
             allStats
         } else {
-            allStats.filter { 
+            allStats.filter {
                 it.title.contains(query, ignoreCase = true) ||
                 it.unit.contains(query, ignoreCase = true) ||
                 it.source.contains(query, ignoreCase = true)
             }
         }
-        
+
         _uiState.value = _uiState.value.copy(
             searchQuery = query,
             filteredStatistics = filteredStats,
@@ -191,7 +193,7 @@ class StatisticsViewModel @Inject constructor(
      */
     private fun shareStatistic(statistic: Statistic) {
         Logger.d("StatisticsViewModel: Sharing statistic: ${statistic.title}")
-        
+
         val shareText = buildString {
             appendLine("📊 ${statistic.title}")
             appendLine("📈 ${statistic.value} ${statistic.unit}")
@@ -201,7 +203,7 @@ class StatisticsViewModel @Inject constructor(
             appendLine()
             appendLine("Узнавайте больше интересных фактов в приложении Statisfy!")
         }
-        
+
         _effect.value = StatisticsEffect.ShareStatistic(shareText)
     }
 
@@ -215,9 +217,10 @@ class StatisticsViewModel @Inject constructor(
     /**
      * Получение тестовых данных статистики
      */
+    @SuppressLint("NewApi")
     private fun getMockStatistics(): List<Statistic> {
         val categories = getMockCategories()
-        
+
         return listOf(
             Statistic(
                 id = "1",

@@ -17,7 +17,6 @@
         android:layout_marginTop="16dp"
         android:fontFamily="@font/inter"
         android:text="@string/stats_loading"
-        android:textColor="?attr/colorOnSurfaceVariant"
         android:textSize="14sp" />
 
 </LinearLayout>

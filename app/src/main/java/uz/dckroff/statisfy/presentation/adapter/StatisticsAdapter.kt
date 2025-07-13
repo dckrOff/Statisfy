@@ -1,7 +1,10 @@
 package uz.dckroff.statisfy.presentation.adapter
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -47,32 +50,38 @@ class StatisticsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatisticsViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        
+
         return when (viewType) {
             VIEW_TYPE_HEADER -> {
                 val binding = ItemStatisticsHeaderBinding.inflate(inflater, parent, false)
                 HeaderViewHolder(binding)
             }
+
             VIEW_TYPE_STATISTIC_RECORD -> {
                 val binding = ItemStatisticsRecordBinding.inflate(inflater, parent, false)
                 StatisticRecordViewHolder(binding, onStatisticClick, onShareClick)
             }
+
             VIEW_TYPE_CATEGORY_FILTER -> {
                 val binding = ItemStatisticsCategoryFilterBinding.inflate(inflater, parent, false)
                 CategoryFilterViewHolder(binding, onCategoryFilterClick)
             }
+
             VIEW_TYPE_LOADING -> {
                 val binding = ItemStatisticsLoadingBinding.inflate(inflater, parent, false)
                 LoadingViewHolder(binding)
             }
+
             VIEW_TYPE_ERROR -> {
                 val binding = ItemStatisticsErrorBinding.inflate(inflater, parent, false)
                 ErrorViewHolder(binding)
             }
+
             VIEW_TYPE_EMPTY -> {
                 val binding = ItemStatisticsEmptyBinding.inflate(inflater, parent, false)
                 EmptyViewHolder(binding)
             }
+
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
     }
@@ -93,7 +102,8 @@ class StatisticsAdapter(
     /**
      * Базовый ViewHolder для статистики
      */
-    abstract class StatisticsViewHolder(itemView: android.view.View) : RecyclerView.ViewHolder(itemView) {
+    abstract class StatisticsViewHolder(itemView: android.view.View) :
+        RecyclerView.ViewHolder(itemView) {
         abstract fun bind(item: StatisticsItem)
     }
 
@@ -103,7 +113,7 @@ class StatisticsAdapter(
     class HeaderViewHolder(
         private val binding: ItemStatisticsHeaderBinding
     ) : StatisticsViewHolder(binding.root) {
-        
+
         override fun bind(item: StatisticsItem) {
             if (item is StatisticsItem.Header) {
                 binding.textViewHeader.text = item.title
@@ -119,7 +129,9 @@ class StatisticsAdapter(
         private val onStatisticClick: (Statistic) -> Unit,
         private val onShareClick: (Statistic) -> Unit
     ) : StatisticsViewHolder(binding.root) {
-        
+
+        @SuppressLint("SetTextI18n")
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun bind(item: StatisticsItem) {
             if (item is StatisticsItem.StatisticRecord) {
                 binding.apply {
@@ -128,7 +140,7 @@ class StatisticsAdapter(
                     textViewCategory.text = item.category.name
                     textViewSource.text = item.source
                     textViewDate.text = item.date
-                    
+
                     val statistic = Statistic(
                         id = item.id,
                         title = item.title,
@@ -142,11 +154,11 @@ class StatisticsAdapter(
                             java.time.LocalDate.now()
                         }
                     )
-                    
+
                     root.setOnClickListener {
                         onStatisticClick(statistic)
                     }
-                    
+
                     buttonShare.setOnClickListener {
                         onShareClick(statistic)
                     }
@@ -162,14 +174,14 @@ class StatisticsAdapter(
         private val binding: ItemStatisticsCategoryFilterBinding,
         private val onCategoryFilterClick: (uz.dckroff.statisfy.domain.model.Category?) -> Unit
     ) : StatisticsViewHolder(binding.root) {
-        
+
         override fun bind(item: StatisticsItem) {
             if (item is StatisticsItem.CategoryFilter) {
                 binding.apply {
                     textViewCategoryName.text = item.category.name
                     textViewCount.text = "(${item.statisticsCount})"
                     root.isSelected = item.isSelected
-                    
+
                     root.setOnClickListener {
                         onCategoryFilterClick(item.category)
                     }
@@ -184,7 +196,7 @@ class StatisticsAdapter(
     class LoadingViewHolder(
         private val binding: ItemStatisticsLoadingBinding
     ) : StatisticsViewHolder(binding.root) {
-        
+
         override fun bind(item: StatisticsItem) {
             // Анимация загрузки уже в layout
         }
@@ -196,7 +208,7 @@ class StatisticsAdapter(
     class ErrorViewHolder(
         private val binding: ItemStatisticsErrorBinding
     ) : StatisticsViewHolder(binding.root) {
-        
+
         override fun bind(item: StatisticsItem) {
             if (item is StatisticsItem.Error) {
                 binding.textViewError.text = item.message
@@ -210,7 +222,7 @@ class StatisticsAdapter(
     class EmptyViewHolder(
         private val binding: ItemStatisticsEmptyBinding
     ) : StatisticsViewHolder(binding.root) {
-        
+
         override fun bind(item: StatisticsItem) {
             if (item is StatisticsItem.Empty) {
                 binding.textViewEmpty.text = item.message
@@ -223,25 +235,28 @@ class StatisticsAdapter(
  * DiffCallback для оптимизации обновлений списка
  */
 class StatisticsDiffCallback : DiffUtil.ItemCallback<StatisticsItem>() {
-    
+
     override fun areItemsTheSame(oldItem: StatisticsItem, newItem: StatisticsItem): Boolean {
         return when {
             oldItem is StatisticsItem.Header && newItem is StatisticsItem.Header -> {
                 oldItem.title == newItem.title
             }
+
             oldItem is StatisticsItem.StatisticRecord && newItem is StatisticsItem.StatisticRecord -> {
                 oldItem.id == newItem.id
             }
+
             oldItem is StatisticsItem.CategoryFilter && newItem is StatisticsItem.CategoryFilter -> {
                 oldItem.category.id == newItem.category.id
             }
+
             oldItem is StatisticsItem.Loading && newItem is StatisticsItem.Loading -> true
             oldItem is StatisticsItem.Error && newItem is StatisticsItem.Error -> true
             oldItem is StatisticsItem.Empty && newItem is StatisticsItem.Empty -> true
             else -> false
         }
     }
-    
+
     override fun areContentsTheSame(oldItem: StatisticsItem, newItem: StatisticsItem): Boolean {
         return oldItem == newItem
     }
