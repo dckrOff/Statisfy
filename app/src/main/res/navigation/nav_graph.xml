@@ -103,6 +103,12 @@
     </fragment>
 
     <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="uz.dckroff.statisfy.presentation.ui.statistics.StatisticsFragment"
+        android:label="StatisticsFragment"
+        tools:layout="@layout/fragment_statistics" />
+
+    <fragment
         android:id="@+id/favoritesFragment"
         android:name="uz.dckroff.statisfy.presentation.ui.favorites.FavoritesFragment"
         android:label="FavoritesFragment"

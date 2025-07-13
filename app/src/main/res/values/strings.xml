@@ -4,6 +4,7 @@
     <string name="news">Новости</string>
     <string name="favorites">Избранное</string>
     <string name="profile">Профиль</string>
+    <string name="statistics">Статистика</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     
@@ -56,4 +57,30 @@
     <string name="copy">Copy</string>
     <string name="add_to_favorites">Add to favorite</string>
     <string name="random_fact">Random fact</string>
+    
+    <!-- Statistics strings -->
+    <string name="stats_title">Ваша статистика</string>
+    <string name="stats_overall">Общая статистика</string>
+    <string name="stats_reading">Статистика чтения</string>
+    <string name="stats_favorites">Избранное</string>
+    <string name="stats_streak">Серии активности</string>
+    <string name="stats_achievements">Достижения</string>
+    <string name="stats_categories">По категориям</string>
+    <string name="stats_monthly">За месяц</string>
+    <string name="stats_items_read">Прочитано</string>
+    <string name="stats_time_spent">Времени потрачено</string>
+    <string name="stats_current_streak">Текущая серия</string>
+    <string name="stats_longest_streak">Самая длинная серия</string>
+    <string name="stats_level">Уровень</string>
+    <string name="stats_experience">Опыт</string>
+    <string name="stats_days_active">Дней активности</string>
+    <string name="stats_total_favorites">Всего избранного</string>
+    <string name="stats_facts_read">Фактов прочитано</string>
+    <string name="stats_news_read">Новостей прочитано</string>
+    <string name="stats_minutes">мин</string>
+    <string name="stats_days">дней</string>
+    <string name="stats_loading">Загрузка статистики...</string>
+    <string name="stats_error">Ошибка загрузки статистики</string>
+    <string name="stats_no_data">Нет данных для отображения</string>
+    <string name="stats_retry">Повторить</string>
 </resources>
