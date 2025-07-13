@@ -9,24 +9,23 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import uz.dckroff.statisfy.R
 import uz.dckroff.statisfy.databinding.FragmentStatisticsBinding
-import uz.dckroff.statisfy.domain.model.UserStats
+import uz.dckroff.statisfy.domain.model.Statistic
+import uz.dckroff.statisfy.domain.model.Category
 import uz.dckroff.statisfy.presentation.adapter.StatisticsAdapter
 import uz.dckroff.statisfy.presentation.viewmodel.StatisticsEvent
 import uz.dckroff.statisfy.presentation.viewmodel.StatisticsViewModel
 import uz.dckroff.statisfy.presentation.viewmodel.StatisticsEffect
-import uz.dckroff.statisfy.presentation.viewmodel.TimePeriod
 import uz.dckroff.statisfy.utils.Logger
 import uz.dckroff.statisfy.utils.gone
 import uz.dckroff.statisfy.utils.visible
 
 /**
- * Фрагмент для отображения статистики пользователя
+ * Фрагмент для отображения глобальной статистики
  */
 @AndroidEntryPoint
 class StatisticsFragment : Fragment() {
@@ -55,6 +54,7 @@ class StatisticsFragment : Fragment() {
         setupRecyclerView()
         setupObservers()
         setupClickListeners()
+        setupSearch()
     }
     
     /**
@@ -63,13 +63,10 @@ class StatisticsFragment : Fragment() {
     private fun setupViews() {
         Logger.d("StatisticsFragment: Setting up views")
         
-        // Настройка chip группы для выбора периода
-        setupTimePeriodChips()
-        
         // Настройка SwipeRefreshLayout
         binding.swipeRefreshLayout.setOnRefreshListener {
             Logger.d("StatisticsFragment: Pull to refresh triggered")
-            viewModel.handleEvent(StatisticsEvent.RefreshStats)
+            viewModel.handleEvent(StatisticsEvent.RefreshStatistics)
         }
     }
     
@@ -79,15 +76,48 @@ class StatisticsFragment : Fragment() {
     private fun setupRecyclerView() {
         Logger.d("StatisticsFragment: Setting up RecyclerView")
         
-        statisticsAdapter = StatisticsAdapter { statisticItem ->
-            Logger.d("StatisticsFragment: Statistic item clicked: ${statisticItem.title}")
-            // Можно добавить обработку клика на элемент статистики
-        }
+        statisticsAdapter = StatisticsAdapter(
+            onStatisticClick = { statistic ->
+                Logger.d("StatisticsFragment: Statistic clicked: ${statistic.title}")
+                viewModel.handleEvent(StatisticsEvent.SelectStatistic(statistic))
+            },
+            onCategoryFilterClick = { category ->
+                Logger.d("StatisticsFragment: Category filter clicked: ${category?.name}")
+                viewModel.handleEvent(StatisticsEvent.FilterByCategory(category))
+            },
+            onShareClick = { statistic ->
+                Logger.d("StatisticsFragment: Share clicked: ${statistic.title}")
+                viewModel.handleEvent(StatisticsEvent.ShareStatistic(statistic))
+            }
+        )
         
         binding.recyclerViewStatistics.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = statisticsAdapter
         }
+    }
+    
+    /**
+     * Настройка поиска
+     */
+    private fun setupSearch() {
+        Logger.d("StatisticsFragment: Setting up search")
+        
+        binding.searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { 
+                    viewModel.handleEvent(StatisticsEvent.SearchStatistics(it))
+                }
+                return true
+            }
+            
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let { 
+                    viewModel.handleEvent(StatisticsEvent.SearchStatistics(it))
+                }
+                return true
+            }
+        })
     }
     
     /**
@@ -128,39 +158,10 @@ class StatisticsFragment : Fragment() {
             viewModel.handleEvent(StatisticsEvent.RetryLoad)
         }
         
-        // Кнопка поделиться
-        binding.buttonShare.setOnClickListener {
-            Logger.d("StatisticsFragment: Share button clicked")
-            viewModel.handleEvent(StatisticsEvent.ShareStats)
-        }
-        
-        // Кнопка экспорта
-        binding.buttonExport.setOnClickListener {
-            Logger.d("StatisticsFragment: Export button clicked")
-            viewModel.handleEvent(StatisticsEvent.ExportStats)
-        }
-    }
-    
-    /**
-     * Настройка чипов для выбора периода времени
-     */
-    private fun setupTimePeriodChips() {
-        Logger.d("StatisticsFragment: Setting up time period chips")
-        
-        TimePeriod.values().forEach { period ->
-            val chip = Chip(requireContext()).apply {
-                text = period.displayName
-                isCheckable = true
-                isChecked = period == TimePeriod.ALL_TIME
-                
-                setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        Logger.d("StatisticsFragment: Time period selected: $period")
-                        viewModel.handleEvent(StatisticsEvent.SelectTimePeriod(period))
-                    }
-                }
-            }
-            binding.chipGroupTimePeriod.addView(chip)
+        // Кнопка очистить фильтр
+        binding.buttonClearFilter.setOnClickListener {
+            Logger.d("StatisticsFragment: Clear filter button clicked")
+            viewModel.handleEvent(StatisticsEvent.ClearFilter)
         }
     }
     
@@ -173,18 +174,32 @@ class StatisticsFragment : Fragment() {
         // Обновляем SwipeRefreshLayout
         binding.swipeRefreshLayout.isRefreshing = state.isLoading
         
+        // Обновляем видимость кнопки очистки фильтра
+        binding.buttonClearFilter.visibility = if (state.selectedCategory != null || state.searchQuery.isNotEmpty()) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+        
+        // Обновляем заголовок в зависимости от фильтра
+        binding.textViewTitle.text = when {
+            state.selectedCategory != null -> "Статистика: ${state.selectedCategory.name}"
+            state.searchQuery.isNotEmpty() -> "Поиск: ${state.searchQuery}"
+            else -> getString(R.string.stats_title)
+        }
+        
         when {
-            state.isLoading -> {
+            state.isLoading && state.filteredStatistics.isEmpty() -> {
                 showLoading()
             }
             state.error != null -> {
                 showError(state.error)
             }
-            state.userStats != null -> {
-                showStats(state.userStats)
+            state.filteredStatistics.isEmpty() -> {
+                showEmpty()
             }
             else -> {
-                showEmpty()
+                showStatistics(state)
             }
         }
     }
@@ -200,7 +215,6 @@ class StatisticsFragment : Fragment() {
             layoutError.gone()
             layoutEmpty.gone()
             recyclerViewStatistics.gone()
-            layoutStats.gone()
         }
     }
     
@@ -215,7 +229,6 @@ class StatisticsFragment : Fragment() {
             layoutError.visible()
             layoutEmpty.gone()
             recyclerViewStatistics.gone()
-            layoutStats.gone()
             
             textViewError.text = error
         }
@@ -232,129 +245,76 @@ class StatisticsFragment : Fragment() {
             layoutError.gone()
             layoutEmpty.visible()
             recyclerViewStatistics.gone()
-            layoutStats.gone()
         }
     }
     
     /**
      * Отображение статистики
      */
-    private fun showStats(userStats: UserStats) {
-        Logger.d("StatisticsFragment: Showing stats")
+    private fun showStatistics(state: uz.dckroff.statisfy.presentation.viewmodel.StatisticsUiState) {
+        Logger.d("StatisticsFragment: Showing statistics")
         
         binding.apply {
             progressBar.gone()
             layoutError.gone()
             layoutEmpty.gone()
             recyclerViewStatistics.visible()
-            layoutStats.visible()
         }
         
-        // Обновляем основные карточки статистики
-        updateStatsCards(userStats)
-        
-        // Обновляем список детальной статистики
-        updateStatsList(userStats)
+        // Создаем список элементов для отображения
+        val items = buildStatisticsItems(state)
+        statisticsAdapter.updateData(items)
     }
     
     /**
-     * Обновление карточек статистики
+     * Создание элементов для отображения
      */
-    private fun updateStatsCards(userStats: UserStats) {
-        Logger.d("StatisticsFragment: Updating stats cards")
-        
-        binding.apply {
-            // Общая статистика
-            textViewTotalItemsRead.text = userStats.overallStats.totalItemsRead.toString()
-            textViewTotalTimeSpent.text = getString(R.string.stats_minutes, userStats.overallStats.totalTimeSpent)
-            textViewCurrentLevel.text = userStats.overallStats.currentLevel.toString()
-            textViewDaysActive.text = userStats.overallStats.daysActive.toString()
-            
-            // Статистика чтения
-            textViewFactsRead.text = userStats.readingStats.factsRead.toString()
-            textViewNewsRead.text = userStats.readingStats.newsRead.toString()
-            textViewAverageReadingTime.text = getString(R.string.stats_minutes, userStats.readingStats.averageReadingTime.toInt())
-            
-            // Статистика серий
-            textViewCurrentStreak.text = userStats.streakStats.currentStreak.toString()
-            textViewLongestStreak.text = userStats.streakStats.longestStreak.toString()
-            
-            // Избранное
-            textViewTotalFavorites.text = userStats.favoriteStats.totalFavorites.toString()
-            
-            // Достижения
-            textViewAchievements.text = userStats.achievements.size.toString()
-            
-            // Прогресс опыта
-            progressBarExperience.progress = userStats.overallStats.experiencePoints
-            progressBarExperience.max = userStats.overallStats.nextLevelXp
-            textViewExperienceProgress.text = "${userStats.overallStats.experiencePoints}/${userStats.overallStats.nextLevelXp}"
-        }
-    }
-    
-    /**
-     * Обновление списка детальной статистики
-     */
-    private fun updateStatsList(userStats: UserStats) {
-        Logger.d("StatisticsFragment: Updating stats list")
-        
-        val statisticsItems = buildStatisticsItems(userStats)
-        statisticsAdapter.updateData(statisticsItems)
-    }
-    
-    /**
-     * Создание элементов для списка статистики
-     */
-    private fun buildStatisticsItems(userStats: UserStats): List<StatisticsItem> {
+    private fun buildStatisticsItems(state: uz.dckroff.statisfy.presentation.viewmodel.StatisticsUiState): List<StatisticsItem> {
         Logger.d("StatisticsFragment: Building statistics items")
         
         val items = mutableListOf<StatisticsItem>()
         
-        // Категории
-        if (userStats.categoryStats.isNotEmpty()) {
-            items.add(StatisticsItem.Header(getString(R.string.stats_categories)))
-            userStats.categoryStats.forEach { categoryStats ->
-                items.add(
-                    StatisticsItem.Category(
-                        id = categoryStats.categoryId,
-                        title = categoryStats.categoryName,
-                        itemsRead = categoryStats.itemsRead,
-                        timeSpent = categoryStats.timeSpent,
-                        progressPercentage = categoryStats.progressPercentage
-                    )
-                )
+        // Добавляем фильтры по категориям, если нет активного поиска
+        if (state.searchQuery.isEmpty() && state.categories.isNotEmpty()) {
+            items.add(StatisticsItem.Header("Фильтр по категориям"))
+            
+            // Добавляем кнопку "Все"
+            items.add(StatisticsItem.CategoryFilter(
+                category = Category("all", "Все"),
+                statisticsCount = state.allStatistics.size,
+                isSelected = state.selectedCategory == null
+            ))
+            
+            state.categories.forEach { category ->
+                val countInCategory = state.allStatistics.count { it.category.id == category.id }
+                items.add(StatisticsItem.CategoryFilter(
+                    category = category,
+                    statisticsCount = countInCategory,
+                    isSelected = state.selectedCategory?.id == category.id
+                ))
             }
         }
         
-        // Месячная активность
-        if (userStats.monthlyActivity.isNotEmpty()) {
-            items.add(StatisticsItem.Header(getString(R.string.stats_monthly)))
-            userStats.monthlyActivity.take(6).forEach { monthlyActivity ->
-                items.add(
-                    StatisticsItem.Monthly(
-                        month = monthlyActivity.month,
-                        itemsRead = monthlyActivity.itemsRead,
-                        timeSpent = monthlyActivity.timeSpent,
-                        daysActive = monthlyActivity.daysActive
-                    )
-                )
+        // Добавляем статистические данные
+        if (state.filteredStatistics.isNotEmpty()) {
+            val headerText = when {
+                state.selectedCategory != null -> "Статистика по категории: ${state.selectedCategory.name}"
+                state.searchQuery.isNotEmpty() -> "Результаты поиска"
+                else -> "Глобальная статистика"
             }
-        }
-        
-        // Достижения
-        if (userStats.achievements.isNotEmpty()) {
-            items.add(StatisticsItem.Header(getString(R.string.stats_achievements)))
-            userStats.achievements.take(10).forEach { achievement ->
-                items.add(
-                    StatisticsItem.Achievement(
-                        id = achievement.id,
-                        title = achievement.title,
-                        description = achievement.description,
-                        iconUrl = achievement.iconUrl,
-                        unlockedAt = achievement.unlockedAt,
-                        rarity = achievement.rarity
-                    )
-                )
+            
+            items.add(StatisticsItem.Header(headerText))
+            
+            state.filteredStatistics.forEach { statistic ->
+                items.add(StatisticsItem.StatisticRecord(
+                    id = statistic.id,
+                    title = statistic.title,
+                    value = statistic.value,
+                    unit = statistic.unit,
+                    category = statistic.category,
+                    source = statistic.source,
+                    date = statistic.date.toString()
+                ))
             }
         }
         
@@ -368,14 +328,12 @@ class StatisticsFragment : Fragment() {
         Logger.d("StatisticsFragment: Handling effect: ${effect::class.simpleName}")
         
         when (effect) {
-            is StatisticsEffect.ShareStats -> {
-                shareStats(effect.text)
-            }
-            is StatisticsEffect.ExportStats -> {
-                exportStats(effect.stats)
+            is StatisticsEffect.ShareStatistic -> {
+                shareStatistic(effect.text)
             }
             is StatisticsEffect.ShowMessage -> {
-                // Показать сообщение (можно использовать Snackbar)
+                // Показать Toast или Snackbar
+                android.widget.Toast.makeText(requireContext(), effect.message, android.widget.Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -383,8 +341,8 @@ class StatisticsFragment : Fragment() {
     /**
      * Поделиться статистикой
      */
-    private fun shareStats(text: String) {
-        Logger.d("StatisticsFragment: Sharing stats")
+    private fun shareStatistic(text: String) {
+        Logger.d("StatisticsFragment: Sharing statistic")
         
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
@@ -393,15 +351,6 @@ class StatisticsFragment : Fragment() {
         }
         
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share)))
-    }
-    
-    /**
-     * Экспорт статистики
-     */
-    private fun exportStats(stats: UserStats) {
-        Logger.d("StatisticsFragment: Exporting stats")
-        // Здесь можно реализовать экспорт в файл
-        // Пока что просто показываем, что функция вызвана
     }
     
     override fun onStart() {

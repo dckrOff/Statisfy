@@ -2,39 +2,46 @@ package uz.dckroff.statisfy.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import uz.dckroff.statisfy.R
-import uz.dckroff.statisfy.databinding.ItemStatisticsAchievementBinding
-import uz.dckroff.statisfy.databinding.ItemStatisticsCategoryBinding
 import uz.dckroff.statisfy.databinding.ItemStatisticsHeaderBinding
-import uz.dckroff.statisfy.databinding.ItemStatisticsMonthlyBinding
+import uz.dckroff.statisfy.databinding.ItemStatisticsRecordBinding
+import uz.dckroff.statisfy.databinding.ItemStatisticsCategoryFilterBinding
+import uz.dckroff.statisfy.databinding.ItemStatisticsEmptyBinding
+import uz.dckroff.statisfy.databinding.ItemStatisticsErrorBinding
+import uz.dckroff.statisfy.databinding.ItemStatisticsLoadingBinding
+import uz.dckroff.statisfy.domain.model.Statistic
 import uz.dckroff.statisfy.presentation.ui.statistics.StatisticsItem
 import uz.dckroff.statisfy.utils.Logger
 
 /**
- * Адаптер для отображения статистики
+ * Адаптер для отображения глобальной статистики
  */
 class StatisticsAdapter(
-    private val onItemClick: (StatisticsItem) -> Unit = {}
+    private val onStatisticClick: (Statistic) -> Unit = {},
+    private val onCategoryFilterClick: (uz.dckroff.statisfy.domain.model.Category?) -> Unit = {},
+    private val onShareClick: (Statistic) -> Unit = {}
 ) : ListAdapter<StatisticsItem, StatisticsAdapter.StatisticsViewHolder>(StatisticsDiffCallback()) {
 
     companion object {
         private const val VIEW_TYPE_HEADER = 0
-        private const val VIEW_TYPE_CATEGORY = 1
-        private const val VIEW_TYPE_MONTHLY = 2
-        private const val VIEW_TYPE_ACHIEVEMENT = 3
+        private const val VIEW_TYPE_STATISTIC_RECORD = 1
+        private const val VIEW_TYPE_CATEGORY_FILTER = 2
+        private const val VIEW_TYPE_LOADING = 3
+        private const val VIEW_TYPE_ERROR = 4
+        private const val VIEW_TYPE_EMPTY = 5
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
             is StatisticsItem.Header -> VIEW_TYPE_HEADER
-            is StatisticsItem.Category -> VIEW_TYPE_CATEGORY
-            is StatisticsItem.Monthly -> VIEW_TYPE_MONTHLY
-            is StatisticsItem.Achievement -> VIEW_TYPE_ACHIEVEMENT
-            else -> throw IllegalArgumentException("Unknown item type at position $position")
+            is StatisticsItem.StatisticRecord -> VIEW_TYPE_STATISTIC_RECORD
+            is StatisticsItem.CategoryFilter -> VIEW_TYPE_CATEGORY_FILTER
+            is StatisticsItem.Loading -> VIEW_TYPE_LOADING
+            is StatisticsItem.Error -> VIEW_TYPE_ERROR
+            is StatisticsItem.Empty -> VIEW_TYPE_EMPTY
         }
     }
 
@@ -46,17 +53,25 @@ class StatisticsAdapter(
                 val binding = ItemStatisticsHeaderBinding.inflate(inflater, parent, false)
                 HeaderViewHolder(binding)
             }
-            VIEW_TYPE_CATEGORY -> {
-                val binding = ItemStatisticsCategoryBinding.inflate(inflater, parent, false)
-                CategoryViewHolder(binding, onItemClick)
+            VIEW_TYPE_STATISTIC_RECORD -> {
+                val binding = ItemStatisticsRecordBinding.inflate(inflater, parent, false)
+                StatisticRecordViewHolder(binding, onStatisticClick, onShareClick)
             }
-            VIEW_TYPE_MONTHLY -> {
-                val binding = ItemStatisticsMonthlyBinding.inflate(inflater, parent, false)
-                MonthlyViewHolder(binding, onItemClick)
+            VIEW_TYPE_CATEGORY_FILTER -> {
+                val binding = ItemStatisticsCategoryFilterBinding.inflate(inflater, parent, false)
+                CategoryFilterViewHolder(binding, onCategoryFilterClick)
             }
-            VIEW_TYPE_ACHIEVEMENT -> {
-                val binding = ItemStatisticsAchievementBinding.inflate(inflater, parent, false)
-                AchievementViewHolder(binding, onItemClick)
+            VIEW_TYPE_LOADING -> {
+                val binding = ItemStatisticsLoadingBinding.inflate(inflater, parent, false)
+                LoadingViewHolder(binding)
+            }
+            VIEW_TYPE_ERROR -> {
+                val binding = ItemStatisticsErrorBinding.inflate(inflater, parent, false)
+                ErrorViewHolder(binding)
+            }
+            VIEW_TYPE_EMPTY -> {
+                val binding = ItemStatisticsEmptyBinding.inflate(inflater, parent, false)
+                EmptyViewHolder(binding)
             }
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
@@ -97,101 +112,109 @@ class StatisticsAdapter(
     }
 
     /**
-     * ViewHolder для категории
+     * ViewHolder для статистической записи
      */
-    class CategoryViewHolder(
-        private val binding: ItemStatisticsCategoryBinding,
-        private val onItemClick: (StatisticsItem) -> Unit
+    class StatisticRecordViewHolder(
+        private val binding: ItemStatisticsRecordBinding,
+        private val onStatisticClick: (Statistic) -> Unit,
+        private val onShareClick: (Statistic) -> Unit
     ) : StatisticsViewHolder(binding.root) {
         
         override fun bind(item: StatisticsItem) {
-            if (item is StatisticsItem.Category) {
-                binding.apply {
-                    textViewCategoryName.text = item.title
-                    textViewItemsRead.text = "${item.itemsRead}"
-                    textViewTimeSpent.text = "${item.timeSpent} мин"
-                    progressBarCategory.progress = item.progressPercentage.toInt()
-                    textViewProgress.text = "${item.progressPercentage.toInt()}%"
-                    
-                    root.setOnClickListener {
-                        onItemClick(item)
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * ViewHolder для месячной активности
-     */
-    class MonthlyViewHolder(
-        private val binding: ItemStatisticsMonthlyBinding,
-        private val onItemClick: (StatisticsItem) -> Unit
-    ) : StatisticsViewHolder(binding.root) {
-        
-        override fun bind(item: StatisticsItem) {
-            if (item is StatisticsItem.Monthly) {
-                binding.apply {
-                    textViewMonth.text = formatMonth(item.month)
-                    textViewItemsRead.text = "${item.itemsRead}"
-                    textViewTimeSpent.text = "${item.timeSpent} мин"
-                    textViewDaysActive.text = "${item.daysActive}"
-                    
-                    root.setOnClickListener {
-                        onItemClick(item)
-                    }
-                }
-            }
-        }
-        
-        private fun formatMonth(month: String): String {
-            // Преобразуем YYYY-MM в более читаемый формат
-            val parts = month.split("-")
-            if (parts.size == 2) {
-                val year = parts[0]
-                val monthNum = parts[1].toIntOrNull() ?: 1
-                val monthNames = arrayOf(
-                    "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-                    "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
-                )
-                return "${monthNames[monthNum - 1]} $year"
-            }
-            return month
-        }
-    }
-
-    /**
-     * ViewHolder для достижения
-     */
-    class AchievementViewHolder(
-        private val binding: ItemStatisticsAchievementBinding,
-        private val onItemClick: (StatisticsItem) -> Unit
-    ) : StatisticsViewHolder(binding.root) {
-        
-        override fun bind(item: StatisticsItem) {
-            if (item is StatisticsItem.Achievement) {
+            if (item is StatisticsItem.StatisticRecord) {
                 binding.apply {
                     textViewTitle.text = item.title
-                    textViewDescription.text = item.description
-                    textViewUnlockedAt.text = "Получено: ${formatDate(item.unlockedAt)}"
+                    textViewValue.text = "${item.value} ${item.unit}"
+                    textViewCategory.text = item.category.name
+                    textViewSource.text = item.source
+                    textViewDate.text = item.date
                     
-                    // Устанавливаем цвет рамки в зависимости от редкости
-                    val rarityColor = android.graphics.Color.parseColor(item.rarity.color)
-                    cardViewAchievement.strokeColor = rarityColor
-                    
-                    // Устанавливаем иконку (если есть)
-                    // TODO: Загрузить иконку из iconUrl если она есть
+                    val statistic = Statistic(
+                        id = item.id,
+                        title = item.title,
+                        value = item.value,
+                        unit = item.unit,
+                        category = item.category,
+                        source = item.source,
+                        date = try {
+                            java.time.LocalDate.parse(item.date)
+                        } catch (e: Exception) {
+                            java.time.LocalDate.now()
+                        }
+                    )
                     
                     root.setOnClickListener {
-                        onItemClick(item)
+                        onStatisticClick(statistic)
+                    }
+                    
+                    buttonShare.setOnClickListener {
+                        onShareClick(statistic)
                     }
                 }
             }
         }
+    }
+
+    /**
+     * ViewHolder для фильтра категорий
+     */
+    class CategoryFilterViewHolder(
+        private val binding: ItemStatisticsCategoryFilterBinding,
+        private val onCategoryFilterClick: (uz.dckroff.statisfy.domain.model.Category?) -> Unit
+    ) : StatisticsViewHolder(binding.root) {
         
-        private fun formatDate(dateString: String): String {
-            // Здесь можно добавить форматирование даты
-            return dateString
+        override fun bind(item: StatisticsItem) {
+            if (item is StatisticsItem.CategoryFilter) {
+                binding.apply {
+                    textViewCategoryName.text = item.category.name
+                    textViewCount.text = "(${item.statisticsCount})"
+                    root.isSelected = item.isSelected
+                    
+                    root.setOnClickListener {
+                        onCategoryFilterClick(item.category)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * ViewHolder для загрузки
+     */
+    class LoadingViewHolder(
+        private val binding: ItemStatisticsLoadingBinding
+    ) : StatisticsViewHolder(binding.root) {
+        
+        override fun bind(item: StatisticsItem) {
+            // Анимация загрузки уже в layout
+        }
+    }
+
+    /**
+     * ViewHolder для ошибки
+     */
+    class ErrorViewHolder(
+        private val binding: ItemStatisticsErrorBinding
+    ) : StatisticsViewHolder(binding.root) {
+        
+        override fun bind(item: StatisticsItem) {
+            if (item is StatisticsItem.Error) {
+                binding.textViewError.text = item.message
+            }
+        }
+    }
+
+    /**
+     * ViewHolder для пустого состояния
+     */
+    class EmptyViewHolder(
+        private val binding: ItemStatisticsEmptyBinding
+    ) : StatisticsViewHolder(binding.root) {
+        
+        override fun bind(item: StatisticsItem) {
+            if (item is StatisticsItem.Empty) {
+                binding.textViewEmpty.text = item.message
+            }
         }
     }
 }
@@ -206,15 +229,15 @@ class StatisticsDiffCallback : DiffUtil.ItemCallback<StatisticsItem>() {
             oldItem is StatisticsItem.Header && newItem is StatisticsItem.Header -> {
                 oldItem.title == newItem.title
             }
-            oldItem is StatisticsItem.Category && newItem is StatisticsItem.Category -> {
+            oldItem is StatisticsItem.StatisticRecord && newItem is StatisticsItem.StatisticRecord -> {
                 oldItem.id == newItem.id
             }
-            oldItem is StatisticsItem.Monthly && newItem is StatisticsItem.Monthly -> {
-                oldItem.month == newItem.month
+            oldItem is StatisticsItem.CategoryFilter && newItem is StatisticsItem.CategoryFilter -> {
+                oldItem.category.id == newItem.category.id
             }
-            oldItem is StatisticsItem.Achievement && newItem is StatisticsItem.Achievement -> {
-                oldItem.id == newItem.id
-            }
+            oldItem is StatisticsItem.Loading && newItem is StatisticsItem.Loading -> true
+            oldItem is StatisticsItem.Error && newItem is StatisticsItem.Error -> true
+            oldItem is StatisticsItem.Empty && newItem is StatisticsItem.Empty -> true
             else -> false
         }
     }

@@ -1,9 +1,9 @@
 package uz.dckroff.statisfy.presentation.ui.statistics
 
-import uz.dckroff.statisfy.domain.model.AchievementRarity
+import uz.dckroff.statisfy.domain.model.Category
 
 /**
- * Элементы для отображения в списке статистики
+ * Элементы для отображения в списке глобальной статистики
  */
 sealed class StatisticsItem {
     
@@ -15,67 +15,43 @@ sealed class StatisticsItem {
     ) : StatisticsItem()
     
     /**
-     * Статистика по категории
+     * Статистическая запись
      */
-    data class Category(
+    data class StatisticRecord(
         val id: String,
         val title: String,
-        val itemsRead: Int,
-        val timeSpent: Long,
-        val progressPercentage: Double
+        val value: Double,
+        val unit: String,
+        val category: Category,
+        val source: String,
+        val date: String
     ) : StatisticsItem()
     
     /**
-     * Месячная активность
+     * Категория для фильтрации
      */
-    data class Monthly(
-        val month: String,
-        val itemsRead: Int,
-        val timeSpent: Long,
-        val daysActive: Int
+    data class CategoryFilter(
+        val category: Category,
+        val statisticsCount: Int,
+        val isSelected: Boolean
     ) : StatisticsItem()
     
     /**
-     * Достижение
+     * Загрузка данных
      */
-    data class Achievement(
-        val id: String,
-        val title: String,
-        val description: String,
-        val iconUrl: String?,
-        val unlockedAt: String,
-        val rarity: AchievementRarity
+    object Loading : StatisticsItem()
+    
+    /**
+     * Ошибка загрузки
+     */
+    data class Error(
+        val message: String
     ) : StatisticsItem()
     
     /**
-     * Общая статистика
+     * Пустое состояние
      */
-    data class Overall(
-        val totalItemsRead: Int,
-        val totalTimeSpent: Long,
-        val currentLevel: Int,
-        val daysActive: Int,
-        val experiencePoints: Int,
-        val nextLevelXp: Int
-    ) : StatisticsItem()
-    
-    /**
-     * Статистика чтения
-     */
-    data class Reading(
-        val factsRead: Int,
-        val newsRead: Int,
-        val averageReadingTime: Double,
-        val readingStreak: Int
-    ) : StatisticsItem()
-    
-    /**
-     * Статистика серий
-     */
-    data class Streak(
-        val currentStreak: Int,
-        val longestStreak: Int,
-        val totalStreaks: Int,
-        val averageStreakLength: Double
+    data class Empty(
+        val message: String
     ) : StatisticsItem()
 }

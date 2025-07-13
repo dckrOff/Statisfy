@@ -6,7 +6,9 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="16dp"
-    app:cardElevation="2dp">
+    app:cardElevation="2dp"
+    android:clickable="true"
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,61 +28,50 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textViewCategoryName"
+                    android:id="@+id/textViewTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter_semibold"
                     android:textColor="?attr/colorOnSurface"
                     android:textSize="16sp"
-                    tools:text="Наука" />
+                    tools:text="Население России" />
 
                 <TextView
-                    android:id="@+id/textViewProgress"
+                    android:id="@+id/textViewValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:fontFamily="@font/inter_medium"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="14sp"
-                    tools:text="75%" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textViewItemsRead"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:fontFamily="@font/inter_bold"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="18sp"
-                    tools:text="25" />
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="24sp"
+                    tools:text="146.0 млн человек" />
 
                 <TextView
+                    android:id="@+id/textViewCategory"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/inter"
-                    android:text="@string/stats_items_read"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="12sp" />
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_chip_category"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="4dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="?attr/colorOnSecondaryContainer"
+                    android:textSize="12sp"
+                    tools:text="Население" />
 
             </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonShare"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/share"
+                app:icon="@drawable/ic_share"
+                app:cornerRadius="24dp"
+                style="@style/Widget.Material3.Button.IconButton" />
 
         </LinearLayout>
-
-        <ProgressBar
-            android:id="@+id/progressBarCategory"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:layout_marginTop="12dp"
-            android:max="100"
-            android:progress="75" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -89,22 +80,25 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/textViewSource"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/inter"
-                android:text="@string/stats_time_spent"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:drawableStart="@drawable/ic_source"
+                android:drawablePadding="4dp"
+                tools:text="Источник: Росстат" />
 
             <TextView
-                android:id="@+id/textViewTimeSpent"
+                android:id="@+id/textViewDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/inter_medium"
-                android:textColor="?attr/colorOnSurface"
+                android:fontFamily="@font/inter"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="12sp"
-                tools:text="120 мин" />
+                tools:text="2024-01-15" />
 
         </LinearLayout>
 
