@@ -59,7 +59,7 @@
     <string name="random_fact">Random fact</string>
     
     <!-- Statistics strings -->
-    <string name="stats_title">Ваша статистика</string>
+    <string name="stats_title">Статистика</string>
     <string name="stats_overall">Общая статистика</string>
     <string name="stats_reading">Статистика чтения</string>
     <string name="stats_favorites">Избранное</string>
