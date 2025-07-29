@@ -107,8 +107,10 @@ data class Achievement(
     val id: String,
     val title: String,
     val description: String,
+    val type: String,
     val iconUrl: String? = null,
     val unlockedAt: String,
+    val isUnlocked: Boolean,
     val category: AchievementCategory,
     val rarity: AchievementRarity,
     val progress: Int = 100, // процент выполнения

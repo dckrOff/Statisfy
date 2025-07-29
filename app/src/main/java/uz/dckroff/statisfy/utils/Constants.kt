@@ -6,7 +6,8 @@ package uz.dckroff.statisfy.utils
 object Constants {
     // API
 //    const val BASE_URL = "https://api.statisfy.uz/" // prod ip
-    const val BASE_URL = "http://192.168.52.32:8080/" // dev ip
+//    const val BASE_URL = "http://192.168.52.32:8080/" // dev ip
+    const val BASE_URL = "http://10.219.185.32:8080/" // dev ip
 
     // SharedPreferences
     const val PREFS_NAME = "statisfy_prefs"

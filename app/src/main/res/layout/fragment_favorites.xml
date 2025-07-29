@@ -65,7 +65,6 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_all"
-                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
@@ -73,21 +72,18 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_facts"
-                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Факты" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_news"
-                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Новости" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_statistics"
-                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Статистика" />
@@ -177,7 +173,7 @@
                 android:layout_height="120dp"
                 android:alpha="0.5"
                 android:src="@drawable/ic_favorites"
-                android:tint="@color/gray_text" />
+                app:tint="@color/gray_text" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -218,7 +214,7 @@
                 android:layout_height="120dp"
                 android:alpha="0.5"
                 android:src="@drawable/ic_error"
-                android:tint="@color/gray_text" />
+                app:tint="@color/gray_text" />
 
             <TextView
                 android:id="@+id/tv_error_message"
