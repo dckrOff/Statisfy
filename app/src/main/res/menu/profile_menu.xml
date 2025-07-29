@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_edit_profile"
+        android:icon="@drawable/ic_edit"
+        android:title="Редактировать профиль"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="Настройки"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_more_vert"
+        android:title="Еще"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_export_data"
+                android:title="Экспорт данных" />
+            <item
+                android:id="@+id/action_sync"
+                android:title="Синхронизировать" />
+            <item
+                android:id="@+id/action_privacy"
+                android:title="Приватность" />
+            <item
+                android:id="@+id/action_help"
+                android:title="Помощь" />
+            <item
+                android:id="@+id/action_logout"
+                android:title="Выйти" />
+        </menu>
+    </item>
+
+</menu>
