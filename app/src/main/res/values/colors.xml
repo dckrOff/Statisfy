@@ -54,4 +54,8 @@
     <color name="chip_text_color">#1B2528</color>
     <color name="chip_stroke_color">#1976D2</color>
     <color name="categoryChipBackground">#E0E0E0</color>
+    
+    <!-- Дополнительные цвета для избранного -->
+    <color name="gray_text">#757575</color>
+    <color name="divider_color">#E0E0E0</color>
 </resources>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Сортировка -->
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_sort"
+        android:title="Сортировка"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/sort_by_recent"
+                android:title="По дате добавления"
+                android:checkable="true"
+                android:checked="true" />
+            <item
+                android:id="@+id/sort_by_alphabetical"
+                android:title="По алфавиту"
+                android:checkable="true" />
+            <item
+                android:id="@+id/sort_by_category"
+                android:title="По категориям"
+                android:checkable="true" />
+            <item
+                android:id="@+id/sort_by_content_type"
+                android:title="По типу контента"
+                android:checkable="true" />
+        </menu>
+    </item>
+
+    <!-- Режим просмотра -->
+    <item
+        android:id="@+id/action_view_mode"
+        android:icon="@drawable/ic_view_list"
+        android:title="Режим просмотра"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/view_mode_list"
+                android:title="Список"
+                android:checkable="true"
+                android:checked="true" />
+            <item
+                android:id="@+id/view_mode_grid"
+                android:title="Сетка"
+                android:checkable="true" />
+            <item
+                android:id="@+id/view_mode_compact"
+                android:title="Компактный"
+                android:checkable="true" />
+        </menu>
+    </item>
+
+    <!-- Дополнительные действия -->
+    <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_more_vert"
+        android:title="Еще"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_select_all"
+                android:title="Выбрать все" />
+            <item
+                android:id="@+id/action_export"
+                android:title="Экспорт" />
+            <item
+                android:id="@+id/action_sync"
+                android:title="Синхронизировать" />
+            <item
+                android:id="@+id/action_create_folder"
+                android:title="Создать папку" />
+            <item
+                android:id="@+id/action_settings"
+                android:title="Настройки" />
+        </menu>
+    </item>
+
+</menu>
