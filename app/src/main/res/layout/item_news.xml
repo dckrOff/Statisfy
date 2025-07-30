@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                tools:src="@drawable/img" />
+                tools:src="@drawable/img_2" />
 
         </androidx.cardview.widget.CardView>
 
@@ -57,7 +57,7 @@
             android:fontFamily="@font/inter"
             android:maxLines="3"
             android:textSize="14sp"
-            tools:text="Краткое описание новости, которое дает представление о содержании статьи" />
+            tools:text="В Узбекистане — резонансные задержания и решительные реформы. Хоким Шараф-Рашидовского района пойман с поличным при получении взятки, в филиале UzTest раскрыто хищение дорогостоящего оборудования. Президент Шавкат Мирзиёев поделился личным опытом в дорожной пробке Ташкента и поручил устранить незаконные ограничения, мешающие горожанам. Также в стране стартует" />
 
         <!-- Метаинформация -->
         <LinearLayout
@@ -78,7 +78,7 @@
                 android:paddingVertical="4dp"
                 android:textSize="12sp"
                 android:textColor="@color/black"
-                tools:text="Технологии" />
+                tools:text="Политика" />
 
             <!-- Индикатор релевантности -->
             <TextView
@@ -123,7 +123,7 @@
             android:gravity="center_vertical"
             android:textSize="12sp"
             app:drawableStartCompat="@drawable/ic_source"
-            tools:text="Источник: TechNews" />
+            tools:text="Источник: Kun.uz" />
 
         <!-- Кнопки действий -->
         <LinearLayout

@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             Logger.d("MainActivity: Navigation to destination: ${destination.label}")
             
             val shouldShowBottomNav = when (destination.id) {
-                R.id.homeFragment, R.id.newsFragment, R.id.favoritesFragment, R.id.profileFragment -> true
+                R.id.homeFragment, R.id.newsFragment, R.id.statisticsFragment, R.id.favoritesFragment, R.id.profileFragment -> true
                 else -> false
             }
             

@@ -31,9 +31,9 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    
+
     private val viewModel: HomeViewModel by viewModels()
-    
+
     private lateinit var factAdapter: FactAdapter
 
     override fun onCreateView(
@@ -51,24 +51,24 @@ class HomeFragment : Fragment() {
         setupRecyclerView()
         observeViewModel()
     }
-    
+
     private fun setupUI() {
         // Настройка SwipeRefreshLayout
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.refreshData()
         }
-        
+
         // Настройка кнопки "More Facts"
         binding.btnMoreFacts.setOnClickListener {
             navigateToFactsList()
         }
-        
+
         // Настройка кнопки "See All"
         binding.tvSeeAllFacts.setOnClickListener {
             navigateToFactsList()
         }
     }
-    
+
     private fun setupRecyclerView() {
         factAdapter = FactAdapter(
             onFactClick = { fact ->
@@ -82,16 +82,16 @@ class HomeFragment : Fragment() {
                 Toast.makeText(requireContext(), "Добавлено в избранное", Toast.LENGTH_SHORT).show()
             }
         )
-        
+
         binding.rvRecentFacts.adapter = factAdapter
     }
-    
+
     private fun observeViewModel() {
         // Наблюдение за состоянием обновления
         viewModel.isRefreshing.observe(viewLifecycleOwner) { isRefreshing ->
             binding.swipeRefresh.isRefreshing = isRefreshing
         }
-        
+
         // Наблюдение за состоянием данных
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.homeState.collectLatest { state ->
@@ -104,7 +104,7 @@ class HomeFragment : Fragment() {
             }
         }
     }
-    
+
     private fun showLoading() {
         binding.apply {
             progressBar.visible()
@@ -112,45 +112,48 @@ class HomeFragment : Fragment() {
             errorLayout.gone()
         }
     }
-    
+
     private fun showContent(data: HomeData) {
         binding.apply {
             progressBar.gone()
             contentLayout.visible()
             errorLayout.gone()
-            
-            // Отображаем факт дня
-            data.dailyFact?.let { fact ->
-                displayDailyFact(fact)
-            }
-            
+
+//            // Отображаем факт дня
+//            data.dailyFact?.let { fact ->
+//                displayDailyFact(fact)
+//            }
+
+            var dailyFact = data.recentFacts!!.get(0)
+            displayDailyFact(dailyFact)
+
             // Отображаем недавние факты
             factAdapter.submitList(data.recentFacts)
         }
     }
-    
+
     private fun displayDailyFact(fact: Fact) {
         binding.apply {
             tvFactTitle.text = fact.title
             tvFactContent.text = fact.content
             tvFactCategory.text = fact.category.name
             tvFactSource.text = "Источник: ${fact.source}"
-            
+
             // Настройка кнопок действий
             btnShare.setOnClickListener { shareFact(fact) }
-            btnFavorite.setOnClickListener { 
+            btnFavorite.setOnClickListener {
                 // TODO: Реализовать добавление в избранное с помощью ViewModel
                 Toast.makeText(requireContext(), "Добавлено в избранное", Toast.LENGTH_SHORT).show()
             }
             btnCopy.setOnClickListener { copyFactToClipboard(fact) }
-            
+
             // Добавляем обработчик клика на карточку для перехода к деталям
             factCardView.setOnClickListener {
                 navigateToFactDetail(fact.id)
             }
         }
     }
-    
+
     private fun navigateToFactDetail(factId: String) {
         Logger.d("HomeFragment: Navigating to fact detail with id: $factId")
         try {
@@ -158,10 +161,14 @@ class HomeFragment : Fragment() {
             findNavController().navigate(directions)
         } catch (e: Exception) {
             Logger.e("HomeFragment: Error navigating to fact detail", e)
-            Toast.makeText(requireContext(), "Ошибка при открытии деталей факта", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Ошибка при открытии деталей факта",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
-    
+
     private fun navigateToFactsList() {
         Logger.d("HomeFragment: Navigating to facts list")
         try {
@@ -169,10 +176,14 @@ class HomeFragment : Fragment() {
             findNavController().navigate(directions)
         } catch (e: Exception) {
             Logger.e("HomeFragment: Error navigating to facts list", e)
-            Toast.makeText(requireContext(), "Ошибка при открытии списка фактов", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Ошибка при открытии списка фактов",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
-    
+
     private fun shareFact(fact: Fact) {
         val shareText = "${fact.title}\n\n${fact.content}\n\nИсточник: ${fact.source}"
         val sendIntent = Intent().apply {
@@ -183,20 +194,22 @@ class HomeFragment : Fragment() {
         val shareIntent = Intent.createChooser(sendIntent, "Поделиться фактом")
         startActivity(shareIntent)
     }
-    
+
     private fun copyFactToClipboard(fact: Fact) {
-        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard =
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Факт", "${fact.title}\n\n${fact.content}")
         clipboard.setPrimaryClip(clip)
-        Toast.makeText(requireContext(), "Факт скопирован в буфер обмена", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Факт скопирован в буфер обмена", Toast.LENGTH_SHORT)
+            .show()
     }
-    
+
     private fun showError(message: String) {
         binding.apply {
             progressBar.gone()
             contentLayout.gone()
             errorLayout.visible()
-            
+
             tvErrorMessage.text = message
             btnRetry.setOnClickListener {
                 viewModel.loadHomeData()

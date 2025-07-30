@@ -78,7 +78,7 @@ class ProfileViewModel @Inject constructor(
     /**
      * Загрузка всех данных профиля
      */
-    private fun loadProfileData() {
+    fun loadProfileData() {
         loadProfile()
         loadPreferences()
         loadStatistics()
@@ -433,6 +433,18 @@ class ProfileViewModel @Inject constructor(
                 _isLoading.value = false
             }
         }
+    }
+
+    fun toggleEditingMode() {
+        TODO("Not yet implemented")
+    }
+
+    fun exportUserData() {
+        TODO("Not yet implemented")
+    }
+
+    fun syncProfileData() {
+        TODO("Not yet implemented")
     }
 }
 

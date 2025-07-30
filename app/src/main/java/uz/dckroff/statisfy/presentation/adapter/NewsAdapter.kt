@@ -23,8 +23,8 @@ class NewsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         val binding = ItemNewsBinding.inflate(
-            LayoutInflater.from(parent.context), 
-            parent, 
+            LayoutInflater.from(parent.context),
+            parent,
             false
         )
         return NewsViewHolder(binding)
@@ -45,51 +45,51 @@ class NewsAdapter(
                 textViewSummary.text = news.summary
                 textViewSource.text = news.source
                 textViewCategory.text = news.category.name
-                
+
                 // Дата публикации
                 textViewDate.text = formatDate(news.publishedAt.toString())
-                
+
                 // Загрузка изображения
                 if (!news.imageUrl.isNullOrEmpty()) {
                     Glide.with(imageViewNews.context)
                         .load(news.imageUrl)
-                        .placeholder(R.drawable.ic_image_placeholder)
+                        .placeholder(R.drawable.img_2)
                         .error(R.drawable.ic_image_error)
                         .centerCrop()
                         .into(imageViewNews)
                 } else {
-                    imageViewNews.setImageResource(R.drawable.ic_image_placeholder)
-                    imageViewNews.scaleType = ImageView.ScaleType.CENTER
+                    imageViewNews.setImageResource(R.drawable.img_2)
+//                    imageViewNews.scaleType = ImageView.ScaleType.CENTER
                 }
-                
+
                 // Индикатор релевантности
                 textViewRelevant.visibility = if (news.isRelevant) {
                     android.view.View.VISIBLE
                 } else {
                     android.view.View.GONE
                 }
-                
+
                 // Кнопка избранного
                 buttonFavorite.setImageResource(
-                    if (isFavorite(news)) R.drawable.ic_favorite_filled 
+                    if (isFavorite(news)) R.drawable.ic_favorite_filled
                     else R.drawable.ic_favorite_outline
                 )
-                
+
                 // Обработчики нажатий
                 root.setOnClickListener {
                     onNewsClick(news)
                 }
-                
+
                 buttonFavorite.setOnClickListener {
                     onFavoriteClick(news)
                 }
-                
+
                 buttonShare.setOnClickListener {
                     onShareClick(news)
                 }
             }
         }
-        
+
         private fun isFavorite(news: News): Boolean {
             // Здесь будет логика проверки избранного
             // Пока возвращаем false, логика будет добавлена позже
@@ -120,8 +120,8 @@ class NewsSearchAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
         val binding = ItemNewsBinding.inflate(
-            LayoutInflater.from(parent.context), 
-            parent, 
+            LayoutInflater.from(parent.context),
+            parent,
             false
         )
         return SearchViewHolder(binding)
@@ -142,11 +142,11 @@ class NewsSearchAdapter(
                 textViewSource.text = news.source
                 textViewCategory.text = news.category.name
                 textViewDate.text = formatDate(news.publishedAt.toString())
-                
+
                 // Для поиска можем скрыть некоторые элементы
                 buttonFavorite.visibility = android.view.View.GONE
                 buttonShare.visibility = android.view.View.GONE
-                
+
                 // Загрузка изображения
                 if (!news.imageUrl.isNullOrEmpty()) {
                     Glide.with(imageViewNews.context)
@@ -158,7 +158,7 @@ class NewsSearchAdapter(
                 } else {
                     imageViewNews.setImageResource(R.drawable.ic_news_placeholder)
                 }
-                
+
                 root.setOnClickListener {
                     onNewsClick(news)
                 }
